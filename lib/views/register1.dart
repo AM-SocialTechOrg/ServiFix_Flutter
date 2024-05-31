@@ -5,6 +5,8 @@ import 'package:servifix_flutter/views/login.dart';
 import 'package:servifix_flutter/views/register2.dart';
 import 'package:servifix_flutter/views/successful_registration.dart';
 
+import '../api/service/authservice.dart';
+
 TextEditingController nameController = TextEditingController();
 TextEditingController lastNameController = TextEditingController();
 TextEditingController dniController = TextEditingController();
@@ -21,6 +23,8 @@ class Register1 extends StatefulWidget {
 
 class _Register1State extends State<Register1> {
   String _selectedUser = 'technician';
+  String  _selectedGender = 'Masculino';
+  DateTime _selectedBirthday = DateTime.now();
   bool _accept = false;
   bool _isFormEmpty = true;
 
@@ -41,6 +45,15 @@ class _Register1State extends State<Register1> {
           !_accept;
     }
     );
+  }
+
+  clearFields() {
+    nameController.clear();
+    lastNameController.clear();
+    dniController.clear();
+    emailController.clear();
+    passwordController.clear();
+    repeatPasswordController.clear();
   }
 
   @override
@@ -124,6 +137,9 @@ class _Register1State extends State<Register1> {
                     labelText: 'Nombres',
                     labelStyle: TextStyle(color: Color(0xFFA0A0A0)),
                   ),
+                  onChanged: (value) {
+                    isFormEmpty();
+                  },
                 ),
 
                 SizedBox(height: 16),
@@ -143,6 +159,9 @@ class _Register1State extends State<Register1> {
                     labelText: 'Apellidos',
                     labelStyle: TextStyle(color: Color(0xFFA0A0A0)),
                   ),
+                  onChanged: (value) {
+                    isFormEmpty();
+                  },
                 ),
 
                 SizedBox(height: 16),
@@ -162,6 +181,106 @@ class _Register1State extends State<Register1> {
                     labelText: 'DNI',
                     labelStyle: TextStyle(color: Color(0xFFA0A0A0)),
                   ),
+                  onChanged: (value) {
+                    isFormEmpty();
+                  },
+                ),
+
+                SizedBox(height: 16),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        width: 264,
+                        height: 50,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0),
+                          border: Border.all(color: Color(0xFFF4F4F4), width: 1.0),
+                        ),
+                        child: DropdownButton<String>(
+                          value: _selectedGender,
+                          items: const <DropdownMenuItem<String>>[
+                            DropdownMenuItem<String>(
+                              value: 'Masculino',
+                              child: Text('Masculino'),
+                            ),
+                            DropdownMenuItem<String>(
+                              value: 'Femenino',
+                              child: Text('Femenino'),
+                            ),
+                            DropdownMenuItem<String>(
+                              value: 'other',
+                              child: Text('Otro'),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedGender = value!;
+                            });
+                          },
+                          style: TextStyle(
+                            color: Color(0xFF4D4D4D),
+                            fontSize: 14,
+                          ),
+                          underline: Container(),
+                          itemHeight: 48,
+                          icon: Padding(
+                            padding: const EdgeInsets.only(left: 15.0),
+                            child: Icon(
+                              Icons.keyboard_arrow_down,
+                              size: 24,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 16),
+
+                    InkWell(
+                      onTap: () async {
+                        final DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: _selectedBirthday,
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                        );
+                        if (pickedDate != null && pickedDate != _selectedBirthday) {
+                          setState(() {
+                            _selectedBirthday = pickedDate;
+                          });
+                        }
+                      },
+                      child: Container(
+                        width: 140,
+                        height: 50,
+                        alignment: Alignment.centerLeft,
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0),
+                          border: Border.all(color: Color(0xFFF4F4F4), width: 1.0),
+                        ),
+
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.calendar_today,
+                              color: Color(0xFF4D4D4D),
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              '${_selectedBirthday.day}/${_selectedBirthday.month}/${_selectedBirthday.year}',
+                              style: TextStyle(
+                                color: Color(0xFF4D4D4D),
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
 
                 SizedBox(height: 16),
@@ -181,6 +300,9 @@ class _Register1State extends State<Register1> {
                     labelText: 'Correo electrónico',
                     labelStyle: TextStyle(color: Color(0xFFA0A0A0)),
                   ),
+                  onChanged: (value) {
+                    isFormEmpty();
+                  },
                 ),
 
                 SizedBox(height: 16),
@@ -200,6 +322,9 @@ class _Register1State extends State<Register1> {
                     labelText: 'Contraseña',
                     labelStyle: TextStyle(color: Color(0xFFA0A0A0)),
                   ),
+                  onChanged: (value) {
+                    isFormEmpty();
+                  },
                 ),
 
                 SizedBox(height: 16),
@@ -219,6 +344,9 @@ class _Register1State extends State<Register1> {
                     labelText: 'Repetir contraseña',
                     labelStyle: TextStyle(color: Color(0xFFA0A0A0)),
                   ),
+                  onChanged: (value) {
+                    isFormEmpty();
+                  },
                 ),
 
                 SizedBox(height: 24),
@@ -264,6 +392,8 @@ class _Register1State extends State<Register1> {
                           builder: (context) => Register2(
                             name: nameController.text,
                             lastname: lastNameController.text,
+                            gender: _selectedGender,
+                            birthday: _selectedBirthday,
                             dni: dniController.text,
                             email: emailController.text,
                             password: passwordController.text,
@@ -272,20 +402,44 @@ class _Register1State extends State<Register1> {
                         ),
                       );
                     } else if (_selectedUser == 'client') {
-                      // Redirigir a la vista para el cliente
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SuccessfulRegistration(
-                            name: nameController.text,
-                            lastname: lastNameController.text,
-                            dni: dniController.text,
-                            email: emailController.text,
-                            password: passwordController.text,
-                            user: _selectedUser,
-                          ),
-                        ),
-                      );
+                      String originalDateTime = _selectedBirthday.toString();
+                      String dateWithoutTime = originalDateTime.substring(0, 10);
+                      int _role = 0;
+
+                      if(_selectedUser == 'client') {
+                        _role = 1;
+                      } else {
+                        _role = 2;
+                      }
+
+                      try
+                      {
+                        final registerResponse = AuthService().register(
+                            nameController.text,
+                            lastNameController.text,
+                            _selectedGender,
+                            dateWithoutTime,
+                            emailController.text,
+                            passwordController.text,
+                            _role);
+                        if (registerResponse != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SuccessfulRegistration(
+                                name: nameController.text,
+                                lastname: lastNameController.text,
+                                email: emailController.text,
+                              user: _selectedUser,
+                            )),
+                          );
+                        }
+                      } catch (e) {
+                        print('Error de registro: $e');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => LogIn()),
+                        );
+                      }
                     }
                   },
                   child: const Text(

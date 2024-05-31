@@ -17,6 +17,7 @@ class LogIn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -145,6 +146,7 @@ class LogIn extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
+                        clearFields();
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => Register1()),
