@@ -84,6 +84,7 @@ class LogIn extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20.0),
                     ),
                     backgroundColor: Color(0xFF1769FF),
+                    elevation: 0,
                   ),
                 ),
                 SizedBox(height: 16),
