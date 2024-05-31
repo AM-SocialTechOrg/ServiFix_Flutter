@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:servifix_flutter/views/register1.dart';
 
 class LogIn extends StatelessWidget {
   const LogIn({super.key});
@@ -36,6 +37,7 @@ class LogIn extends StatelessWidget {
                 SizedBox(height: 24),
                 TextField(
                   decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
@@ -51,6 +53,7 @@ class LogIn extends StatelessWidget {
                 SizedBox(height: 16),
                 TextField(
                   decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
@@ -116,7 +119,10 @@ class LogIn extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        // Add code here
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Register1()),
+                        );
                       },
                     ),
                   ],
