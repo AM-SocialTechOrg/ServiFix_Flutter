@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:servifix_flutter/views/register1.dart';
 import 'package:servifix_flutter/api/service/authservice.dart';
 import 'package:servifix_flutter/views/success.dart';
+import 'package:provider/provider.dart';
+import 'package:servifix_flutter/api/provider/AuthModel.dart';
+import 'package:servifix_flutter/views/user_publication.dart';
+
+
 
 TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
@@ -87,9 +92,12 @@ class LogIn extends StatelessWidget {
                       final token = loginResponse.token;
                       if (token.isNotEmpty) {
                         clearFields();
+                        Provider.of<Authmodel>(context, listen: false).setToken(token);
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Success(token: token)),
+                          //MaterialPageRoute(builder: (context) => Success(token: token)),
+                          // user_publication
+                          MaterialPageRoute(builder: (context) => ProfileScreen()),
                         );
                       }
                     } catch (e) {
