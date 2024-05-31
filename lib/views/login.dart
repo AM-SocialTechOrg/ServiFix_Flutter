@@ -13,6 +13,89 @@ class LogIn extends StatelessWidget {
     passwordController.clear();
   }
 
+  void _showResetPasswordSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            top: 16,
+            left: 16,
+            right: 16,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Center(
+                child: Container(
+                  height: 4,
+                  width: 40,
+                  color: Colors.grey[300],
+                  margin: EdgeInsets.only(bottom: 16),
+                ),
+              ),
+              Text(
+                'Cambiar contraseña',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Ingresa una nueva contraseña para acceder a tu cuenta.',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+              SizedBox(height: 16),
+              TextField(
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Nueva contraseña',
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  suffixIcon: Icon(Icons.visibility_off),
+                ),
+              ),
+              SizedBox(height: 16),
+              TextField(
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Repetir contraseña',
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  suffixIcon: Icon(Icons.visibility_off),
+                ),
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _showUpdatedPasswordSheet(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white, backgroundColor: Colors.grey, minimumSize: Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                ),
+                child: Text('Continuar'),
+              ),
+              SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   void _showVerificationCodeSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -82,7 +165,10 @@ class LogIn extends StatelessWidget {
               ),
               SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _showResetPasswordSheet(context);
+                },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white, backgroundColor: Colors.grey, minimumSize: Size(double.infinity, 48),
                   shape: RoundedRectangleBorder(
@@ -166,6 +252,65 @@ class LogIn extends StatelessWidget {
     );
   }
 
+  void _showUpdatedPasswordSheet(BuildContext context){
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context){
+          return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                top: 16,
+                left: 16,
+                right: 16,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Center(
+                    child: Container(
+                      height: 4,
+                      width: 40,
+                      color: Colors.grey[300],
+                      margin: const EdgeInsets.only(bottom: 16),
+                    ),
+                  ),
+                  Image(
+                    image: AssetImage('lib/assets/tools.png'),
+                    width: 70,
+                    height: 70,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Contraseña actualizada',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Su contraseña se ha actualizado exitosamente',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white, backgroundColor: Colors.grey, minimumSize: Size(double.infinity, 48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                    ),
+                    child: const Text('Iniciar Sesion'),
+                  ),
+                  SizedBox(height: 16),
+                ],
+              ),
+          );
+        },
+    );
+  }
 
   const LogIn({super.key});
 
