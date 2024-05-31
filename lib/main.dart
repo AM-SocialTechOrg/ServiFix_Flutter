@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:servifix_flutter/views/login.dart';
 import 'package:servifix_flutter/views/user_publication.dart';
+import 'package:provider/provider.dart';
+import 'api/provider/AuthModel.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => Authmodel()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -17,7 +27,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: ProfileScreen(),
+      home: LogIn(),
+      //home : ProfileScreen(),
     );
   }
 }
