@@ -2,11 +2,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:servifix_flutter/views/login.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:servifix_flutter/views/register3.dart';
 
 class Register2 extends StatefulWidget {
 
   final String name;
   final String lastname;
+  final String gender;
+  final DateTime birthday;
   final String dni;
   final String email;
   final String password;
@@ -16,6 +19,8 @@ class Register2 extends StatefulWidget {
     Key? key,
     required this.name,
     required this.lastname,
+    required this.gender,
+    required this.birthday,
     required this.dni,
     required this.email,
     required this.password,
@@ -36,6 +41,10 @@ class _Register2State extends State<Register2> {
     setState(() {
       _isfileSelected = true;
     });
+  }
+
+  clearFields() {
+    fileController.clear();
   }
 
   @override
@@ -159,7 +168,16 @@ class _Register2State extends State<Register2> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => LogIn()),
+                      MaterialPageRoute(builder: (context) => Register3(
+                      name:  widget.name,
+                      lastname: widget.lastname,
+                      gender: widget.gender,
+                      birthday: widget.birthday,
+                      dni: widget.dni,
+                      email: widget.email,
+                      password: widget.password,
+                      user: widget.user)
+                      ),
                     );
                   },
                   child: const Text(

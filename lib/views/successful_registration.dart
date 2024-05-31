@@ -5,18 +5,14 @@ import 'login.dart';
 class SuccessfulRegistration extends StatefulWidget {
   final String name;
   final String lastname;
-  final String dni;
   final String email;
-  final String password;
   final String user;
 
   const SuccessfulRegistration({
     Key? key,
     required this.name,
     required this.lastname,
-    required this.dni,
     required this.email,
-    required this.password,
     required this.user,
   }) : super(key: key);
 
