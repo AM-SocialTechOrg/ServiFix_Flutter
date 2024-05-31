@@ -86,7 +86,7 @@ class _SuccessfulRegistrationState extends State<SuccessfulRegistration> {
               Text(
                 widget.user == 'trabajador'
                     ? 'Mientras tanto, puedes iniciar sesión y agregar información en tu perfil profesional.'
-                    : 'Inicia sesión y explora los servicios que ofrecemos.',
+                    : 'Inicia sesión para descubrir todas las funciones.',
                 textAlign: TextAlign.center,
               ),
 
