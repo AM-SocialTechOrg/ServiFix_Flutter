@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:servifix_flutter/views/login.dart';
+import 'package:servifix_flutter/views/user_publication.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: LogIn(),
+      home: ProfileScreen(),
     );
   }
 }
