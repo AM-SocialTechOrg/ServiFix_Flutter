@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:servifix_flutter/views/login.dart';
 
 class Register1 extends StatefulWidget {
   const Register1({Key? key}) : super(key: key);
@@ -46,10 +47,11 @@ class _Register1State extends State<Register1> {
 
                 Container(
                   width: 152,
+                  height: 40,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(20.0),
+                    border: Border.all(color: Color(0xFFF4F4F4), width: 1.0),
                   ),
                   child: DropdownButton<String>(
                     value: _selectedUser,
@@ -65,10 +67,11 @@ class _Register1State extends State<Register1> {
                     ],
                     onChanged: dropDownChanged,
                     style: TextStyle(
-                      color: Color(0xFF4D4D4D),
+                      color: Color(0xFFF4F4F4),
                       fontSize: 14,
                     ),
                     underline: Container(),
+                    itemHeight: 48,
                     icon: Padding(
                       padding: const EdgeInsets.only(left: 30.0),
                       child: Icon(
@@ -84,7 +87,7 @@ class _Register1State extends State<Register1> {
                 TextField(
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    border: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
                     ),
@@ -102,7 +105,7 @@ class _Register1State extends State<Register1> {
                 TextField(
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    border: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
                     ),
@@ -120,7 +123,7 @@ class _Register1State extends State<Register1> {
                 TextField(
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    border: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
                     ),
@@ -138,7 +141,7 @@ class _Register1State extends State<Register1> {
                 TextField(
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    border: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
                     ),
@@ -156,7 +159,7 @@ class _Register1State extends State<Register1> {
                 TextField(
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    border: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
                     ),
@@ -174,7 +177,7 @@ class _Register1State extends State<Register1> {
                 TextField(
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    border: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
                     ),
@@ -193,6 +196,11 @@ class _Register1State extends State<Register1> {
                   children: [
                     Switch(
                         value: _accept ,
+                        activeColor: Colors.white,
+                        activeTrackColor: Color(0xFF67A1FF),
+                        inactiveThumbColor: Colors.white,
+                        inactiveTrackColor: Color(0xFFDFDFDF),
+                        trackOutlineColor: MaterialStateProperty.all(Colors.transparent),
                         onChanged: (value) {
                         setState(() {
                           _accept = value;
@@ -241,7 +249,10 @@ class _Register1State extends State<Register1> {
                     ),
                   ),
                   onPressed: () {
-                    // Add code here
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LogIn()),
+                    );
                   },
                 ),
 
