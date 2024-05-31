@@ -38,7 +38,7 @@ class LogIn extends StatelessWidget {
                 TextField(
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    border: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
                     ),
@@ -54,7 +54,7 @@ class LogIn extends StatelessWidget {
                 TextField(
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    border: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
                     ),
@@ -84,6 +84,7 @@ class LogIn extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20.0),
                     ),
                     backgroundColor: Color(0xFF1769FF),
+                    elevation: 0,
                   ),
                 ),
                 SizedBox(height: 16),

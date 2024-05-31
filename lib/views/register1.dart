@@ -1,6 +1,16 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:servifix_flutter/views/login.dart';
+import 'package:servifix_flutter/views/register2.dart';
+import 'package:servifix_flutter/views/successful_registration.dart';
+
+TextEditingController nameController = TextEditingController();
+TextEditingController lastNameController = TextEditingController();
+TextEditingController dniController = TextEditingController();
+TextEditingController emailController = TextEditingController();
+TextEditingController passwordController = TextEditingController();
+TextEditingController repeatPasswordController = TextEditingController();
 
 class Register1 extends StatefulWidget {
   const Register1({Key? key}) : super(key: key);
@@ -12,6 +22,7 @@ class Register1 extends StatefulWidget {
 class _Register1State extends State<Register1> {
   String _selectedUser = 'technician';
   bool _accept = false;
+  bool _isFormEmpty = true;
 
   void dropDownChanged(String? value) {
     setState(() {
@@ -19,13 +30,28 @@ class _Register1State extends State<Register1> {
     });
   }
 
+  void isFormEmpty() {
+    setState(() {
+      _isFormEmpty = nameController.text.isEmpty ||
+          lastNameController.text.isEmpty ||
+          dniController.text.isEmpty ||
+          emailController.text.isEmpty ||
+          passwordController.text.isEmpty ||
+          repeatPasswordController.text.isEmpty ||
+          !_accept;
+    }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    isFormEmpty();
+
     return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(48.0),
+            padding: const EdgeInsets.only(right: 48.0, left: 48.0, top: 56.0, bottom: 48.0),
             child: Column(
               children: [
                 Image(
@@ -46,10 +72,11 @@ class _Register1State extends State<Register1> {
 
                 Container(
                   width: 152,
+                  height: 40,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(20.0),
+                    border: Border.all(color: Color(0xFFF4F4F4), width: 1.0),
                   ),
                   child: DropdownButton<String>(
                     value: _selectedUser,
@@ -69,6 +96,7 @@ class _Register1State extends State<Register1> {
                       fontSize: 14,
                     ),
                     underline: Container(),
+                    itemHeight: 48,
                     icon: Padding(
                       padding: const EdgeInsets.only(left: 30.0),
                       child: Icon(
@@ -82,9 +110,10 @@ class _Register1State extends State<Register1> {
                 SizedBox(height: 16),
 
                 TextField(
+                  controller: nameController,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    border: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
                     ),
@@ -100,9 +129,10 @@ class _Register1State extends State<Register1> {
                 SizedBox(height: 16),
 
                 TextField(
+                  controller: lastNameController,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    border: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
                     ),
@@ -118,9 +148,10 @@ class _Register1State extends State<Register1> {
                 SizedBox(height: 16),
 
                 TextField(
+                  controller: dniController,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    border: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
                     ),
@@ -136,9 +167,10 @@ class _Register1State extends State<Register1> {
                 SizedBox(height: 16),
 
                 TextField(
+                  controller: emailController,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    border: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
                     ),
@@ -154,9 +186,10 @@ class _Register1State extends State<Register1> {
                 SizedBox(height: 16),
 
                 TextField(
+                  controller: passwordController,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    border: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
                     ),
@@ -172,9 +205,10 @@ class _Register1State extends State<Register1> {
                 SizedBox(height: 16),
 
                 TextField(
+                  controller: repeatPasswordController,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    border: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
                     ),
@@ -193,6 +227,11 @@ class _Register1State extends State<Register1> {
                   children: [
                     Switch(
                         value: _accept ,
+                        activeColor: Colors.white,
+                        activeTrackColor: Color(0xFF67A1FF),
+                        inactiveThumbColor: Colors.white,
+                        inactiveTrackColor: Color(0xFFDFDFDF),
+                        trackOutlineColor: MaterialStateProperty.all(Colors.transparent),
                         onChanged: (value) {
                         setState(() {
                           _accept = value;
@@ -214,11 +253,43 @@ class _Register1State extends State<Register1> {
                 SizedBox(height: 16),
 
                 ElevatedButton(
-                  onPressed: () {
-                    // Add code here
+                  onPressed:_isFormEmpty
+                      ? null
+                      : () {
+                    if (_selectedUser == 'technician') {
+                      // Redirigir a la vista para el técnico
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Register2(
+                            name: nameController.text,
+                            lastname: lastNameController.text,
+                            dni: dniController.text,
+                            email: emailController.text,
+                            password: passwordController.text,
+                            user: _selectedUser,
+                          ),
+                        ),
+                      );
+                    } else if (_selectedUser == 'client') {
+                      // Redirigir a la vista para el cliente
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SuccessfulRegistration(
+                            name: nameController.text,
+                            lastname: lastNameController.text,
+                            dni: dniController.text,
+                            email: emailController.text,
+                            password: passwordController.text,
+                            user: _selectedUser,
+                          ),
+                        ),
+                      );
+                    }
                   },
                   child: const Text(
-                    'Iniciar Sesión',
+                    'Continuar',
                     style: TextStyle(
                       color: Color(0xFFFFFFFF),
                       fontSize: 14,
@@ -228,7 +299,8 @@ class _Register1State extends State<Register1> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
-                    backgroundColor: Color(0xFF1769FF),
+                    backgroundColor: _isFormEmpty ? Color(0xFFDFDFDF) : Color(0xFF1769FF),
+                    elevation: 0,
                   ),
                 ),
 
@@ -241,7 +313,10 @@ class _Register1State extends State<Register1> {
                     ),
                   ),
                   onPressed: () {
-                    // Add code here
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LogIn()),
+                    );
                   },
                 ),
 
@@ -249,7 +324,6 @@ class _Register1State extends State<Register1> {
             ),
           ),
         ),
-      ),
     );
   }
 }
