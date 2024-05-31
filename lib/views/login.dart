@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:servifix_flutter/views/register1.dart';
+import 'package:servifix_flutter/api/service/authservice.dart';
+import 'package:servifix_flutter/views/success.dart';
+
+TextEditingController emailController = TextEditingController();
+TextEditingController passwordController = TextEditingController();
 
 class LogIn extends StatelessWidget {
+
+  void clearFields() {
+    emailController.clear();
+    passwordController.clear();
+  }
+
   const LogIn({super.key});
 
   @override
@@ -36,6 +47,7 @@ class LogIn extends StatelessWidget {
                 ),
                 SizedBox(height: 24),
                 TextField(
+                  controller: emailController,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                     enabledBorder: OutlineInputBorder(
@@ -52,6 +64,7 @@ class LogIn extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 TextField(
+                  controller: passwordController,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                     enabledBorder: OutlineInputBorder(
@@ -68,8 +81,20 @@ class LogIn extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () {
-                    // Add code here
+                  onPressed: () async {
+                    try {
+                      final loginResponse = await AuthService().login(emailController.text, passwordController.text);
+                      final token = loginResponse.token;
+                      if (token.isNotEmpty) {
+                        clearFields();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Success(token: token)),
+                        );
+                      }
+                    } catch (e) {
+                      print('Error de inicio de sesión: $e');
+                    }
                   },
                   child: const Text(
                     'Iniciar Sesión',
