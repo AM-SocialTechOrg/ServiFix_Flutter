@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:servifix_flutter/api/service/accountservice.dart';
 import 'package:servifix_flutter/views/login.dart';
 import 'package:servifix_flutter/views/register2.dart';
 import 'package:servifix_flutter/views/successful_registration.dart';
@@ -414,6 +415,7 @@ class _Register1State extends State<Register1> {
 
                       try
                       {
+                        //registrar usuario
                         final registerResponse = AuthService().register(
                             nameController.text,
                             lastNameController.text,
@@ -422,15 +424,49 @@ class _Register1State extends State<Register1> {
                             emailController.text,
                             passwordController.text,
                             _role);
+                          print('crear cuenta');
+
                         if (registerResponse != null) {
+
+                          //crear cuenta
+                          /*print('crear cuenta');
+                          try {
+                            final accountResponse = AccountService().createAccount(
+                                nameController.text,
+                                lastNameController.text,
+                                _selectedGender,
+                                dateWithoutTime,
+                                emailController.text,
+                                passwordController.text,
+                                _role);
+
+                            if (accountResponse != null) {
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => SuccessfulRegistration(
+                                  name: nameController.text,
+                                  lastname: lastNameController.text,
+                                  email: emailController.text,
+                                  user: _selectedUser,
+                                )
+                                ),
+                              );
+                            }
+                          }
+                          catch (e) {
+                            print('Error al crear cuenta: $e');
+                          }*/
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => SuccessfulRegistration(
-                                name: nameController.text,
-                                lastname: lastNameController.text,
-                                email: emailController.text,
+                              name: nameController.text,
+                              lastname: lastNameController.text,
+                              email: emailController.text,
                               user: _selectedUser,
-                            )),
+                            )
+                            ),
                           );
                         }
                       } catch (e) {
