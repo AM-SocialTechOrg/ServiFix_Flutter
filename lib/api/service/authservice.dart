@@ -44,8 +44,6 @@ class AuthService {
     ).toJson();
     final bodyJson = json.encode(requestBody);
 
-    print(bodyJson);
-
     final response = await http.post(
       Uri.parse(apiBase + "auth/register"),
       headers: {

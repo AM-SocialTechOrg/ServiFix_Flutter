@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:servifix_flutter/views/login.dart';
 import 'package:servifix_flutter/views/successful_registration.dart';
 
+import '../api/service/accountservice.dart';
 import '../api/service/authservice.dart';
 
 TextEditingController timeController = TextEditingController();
@@ -312,14 +313,45 @@ class _Register3State extends State<Register3> {
                       widget.password,
                         _role);
                     if (registerResponse != null) {
+                      //crear cuenta
+                     /* print('crear cuenta');
+                      try {
+                        final accountResponse = AccountService().createAccount(
+                            widget.name,
+                            widget.lastname,
+                            widget.gender,
+                            dateWithoutTime,
+                            widget.email,
+                            widget.password,
+                            _role);
+
+                        if (accountResponse != null) {
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SuccessfulRegistration(
+                              name:  widget.name,
+                              lastname: widget.lastname,
+                              email: emailController.text,
+                              user: widget.user,
+                            )
+                            ),
+                          );
+                        }
+                      }
+                      catch (e) {
+                        print('Error al crear cuenta: $e');
+                      }*/
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => SuccessfulRegistration(
-                            name: widget.name,
-                            lastname: widget.lastname,
-                            email: widget.email,
-                            user: widget.user
-                           )),
+                          name:  widget.name,
+                          lastname: widget.lastname,
+                          email: emailController.text,
+                          user: widget.user,
+                        )
+                        ),
                       );
                     }
                   } catch (e) {
