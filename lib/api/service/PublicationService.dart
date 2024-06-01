@@ -1,33 +1,38 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../dto/cliente_response.dart';
-import '../provider/AuthModel.dart';
+import '../model/publication.dart';
 
-class ClienteService {
+class PublicationService {
 
   static const String apiBase = "https://servifix-api-docker.onrender.com/api/v1/";
+/*
+* /api/v1/servifix/publications/user/{id}
+Get all publications by user
 
-  Future<ClienteResponse> getCliente(String id,String TokenModel) async {
+Parameters
+* */
+  Future<List<Publicaticion> > getPublications(String id,String TokenModel) async {
     String token = TokenModel;
 
     final response = await http.get(
-      Uri.parse(apiBase + "servifix/users/$id"),
+      Uri.parse(apiBase + "servifix/publications/user/$id"),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token', // Incluye el token de autenticación en el encabezado
       },
     );
-
     if (response.statusCode == 200) {
       final res = json.decode(utf8.decode(response.bodyBytes));
       print( "respuesta json:" + res.toString());
-      final clienteResponse = ClienteResponse.fromJson(res);
-      return clienteResponse;
+
+      if (res['data'] != null) {
+        List<Publicaticion> publicationResponse = (res['data'] as List).map((i) => Publicaticion.fromJson(i)).toList();
+        return publicationResponse;
+      } else {
+        throw Exception('The response does not contain a "data" field');
+      }
     } else {
       throw Exception('Failed to load backend: ${response.statusCode}');
     }
   }
-
-
-
 }
