@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:servifix_flutter/api/model/publication.dart';
 import 'package:servifix_flutter/api/service/clienteService.dart';
 import 'package:provider/provider.dart';
 import 'package:servifix_flutter/api/provider/AuthModel.dart';
 import '../api/dto/cliente_response.dart';
-
-
+import 'package:servifix_flutter/api/service/PublicationService.dart';
 
 class ProfileScreen extends StatefulWidget {
 
@@ -14,24 +14,47 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   ClienteResponse? _cliente;
+  // lista de publicaciones
+  List<Publicaticion>? _publicaciones;
+
   final ClienteService clienteService = ClienteService();
+  final PublicationService publicationService = PublicationService();
   @override
   void initState() {
     super.initState();
     print("initState for ProfileScreen");
     _fetchCliente();
+    _fetchPublicaciones();
   }
 
   Future<void> _fetchCliente() async {
     try {
       String token = Provider.of<Authmodel>(context, listen: false).getToken;
-      ClienteResponse cliente = await clienteService.getCliente('3', token);
+      String id = Provider.of<Authmodel>(context, listen: false).getId;
+      ClienteResponse cliente = await clienteService.getCliente(id,token);
       setState(() {
         _cliente = cliente;
-        print('Cliente: prueba');
+        print('Cliente: prueba con id');
       });
     } catch (e) {
       print('Error: No devuelve el cliente' + e.toString());
+    }
+  }
+
+  Future<void> _fetchPublicaciones() async {
+    try {
+      String token = Provider.of<Authmodel>(context, listen: false).getToken;
+      String id = Provider.of<Authmodel>(context, listen: false).getId;
+      _publicaciones = await publicationService.getPublications(id,token);
+      setState(() {
+        print('Publicaciones: prueba con id');
+        // ver los elementos publicaciones lista
+        _publicaciones!.forEach((element) {
+          print("titulo de la publicacion: "+element.toString());
+        });
+      });
+    } catch (e) {
+      print('Error: No devuelve las publicaciones' + e.toString());
     }
   }
 
@@ -189,7 +212,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             CircleAvatar(
               radius: 50,
               backgroundColor: Colors.grey[300],
-              child: Icon(Icons.person, size: 50, color: Colors.grey),
+              backgroundImage: NetworkImage(_cliente!.data.image),
             ),
             SizedBox(height: 10),
 
@@ -200,7 +223,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(height: 5),
             Text('Cliente'),
             SizedBox(height: 20),
-
 
             ElevatedButton(
               onPressed: () => _showServiceRequestForm(context),
@@ -230,8 +252,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
-
-
             SizedBox(height: 20),
             TabBar(
               tabs: [
@@ -244,9 +264,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Expanded(
               child: TabBarView(
                 children: [
-                  ListView(
-                    children: [
-                      Card(
+                  ListView.builder(
+                    itemCount: _publicaciones?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      final publication = _publicaciones![index];
+                      return Card(
                         margin: EdgeInsets.all(10),
                         child: Padding(
                           padding: EdgeInsets.all(10),
@@ -254,34 +276,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Reparación de fuga en baño',
+                                publication.title,
                                 style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold),
                               ),
                               SizedBox(height: 10),
                               Text(
-                                'Descripción: Se necesita un gasfitero experimentado para reparar una fuga en la tubería del baño principal. La fuga parece estar cerca del lavamanos y está causando humedad en el suelo.',
+                                'Descripción: ' + publication.description,
                               ),
                               SizedBox(height: 10),
-                              Text('Dirección: Calle Principal #123, Lima'),
+                              Text('Dirección: ' + publication.address),
                               SizedBox(height: 10),
-                              Text('Técnico: Gasfitero'),
+                              Text('Técnico: ' + publication.job.name),
                               SizedBox(height: 10),
                               Container(
                                 width: double.infinity,
                                 height: 150,
                                 color: Colors.grey[300],
-                                child: Center(
-                                  child: Icon(Icons.image,
-                                      size: 50, color: Colors.grey),
+                                child: Image.network(
+                                  publication.picture,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                    // Si hay un error al cargar la imagen, muestra un icono de error
+                                    return Center(child: Icon(Icons.error, size: 50, color: Colors.grey));
+                                  },
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
                   Center(child: Text('No hay comentarios')),
                 ],
