@@ -212,12 +212,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             CircleAvatar(
               radius: 50,
               backgroundColor: Colors.grey[300],
-              backgroundImage: NetworkImage(_cliente!.data.image),
+              backgroundImage: _cliente != null && _cliente!.data != null && _cliente!.data.image != null
+                  ? NetworkImage(_cliente!.data.image)
+                  : null,
             ),
             SizedBox(height: 10),
 
             Text(
-              _cliente != null ? _cliente!.data!.account!.firstName : 'Loading...',
+              _cliente != null && _cliente!.data != null && _cliente!.data!.account != null
+                  ? _cliente!.data!.account!.firstName
+                  : 'Loading...',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 5),
@@ -264,8 +268,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Expanded(
               child: TabBarView(
                 children: [
-                  ListView.builder(
-                    itemCount: _publicaciones?.length ?? 0,
+                  _publicaciones != null
+                      ? ListView.builder(
+                    itemCount: _publicaciones!.length,
                     itemBuilder: (context, index) {
                       final publication = _publicaciones![index];
                       return Card(
@@ -308,7 +313,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       );
                     },
-                  ),
+                  )
+                      : Center(child: Text('No hay publicaciones')),
                   Center(child: Text('No hay comentarios')),
                 ],
               ),
