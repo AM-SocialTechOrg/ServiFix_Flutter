@@ -4,7 +4,7 @@ import 'package:servifix_flutter/api/service/authservice.dart';
 import 'package:servifix_flutter/views/success.dart';
 import 'package:provider/provider.dart';
 import 'package:servifix_flutter/api/provider/AuthModel.dart';
-import 'package:servifix_flutter/views/user_publication.dart';
+import 'package:servifix_flutter/views/user_profile.dart';
 
 
 
@@ -397,7 +397,7 @@ class LogIn extends StatelessWidget {
                           context,
                           //MaterialPageRoute(builder: (context) => Success(token: token)),
                           // user_publication
-                          MaterialPageRoute(builder: (context) => ProfileScreen()),
+                          MaterialPageRoute(builder: (context) => UserProfileScreen()),
                         );
                       }
                     } catch (e) {
