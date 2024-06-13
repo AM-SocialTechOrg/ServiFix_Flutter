@@ -6,13 +6,13 @@ import 'package:servifix_flutter/api/provider/AuthModel.dart';
 import '../api/dto/cliente_response.dart';
 import 'package:servifix_flutter/api/service/PublicationService.dart';
 
-class ProfileScreen extends StatefulWidget {
+class UserProfileScreen extends StatefulWidget {
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  _UserProfileScreenState createState() => _UserProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _UserProfileScreenState extends State<UserProfileScreen> {
   ClienteResponse? _cliente;
   // lista de publicaciones
   List<Publicaticion>? _publicaciones;
@@ -221,11 +221,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               _cliente != null && _cliente!.data != null && _cliente!.data!.account != null
                   ? _cliente!.data!.account!.firstName
-                  : 'Loading...',
+                  : 'Cargando...',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 5),
-            Text('Cliente'),
+            Text(
+              _cliente != null && _cliente!.data != null && _cliente!.data!.account != null
+                  ? _cliente!.data!.account!.role!.id == 1 ? 'Cliente' : 'Técnico'
+                  : 'Cargando...',
+
+            ),
             SizedBox(height: 20),
 
             ElevatedButton(
@@ -250,7 +254,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     'Solicitar servicio',
                     style: TextStyle(
                       color: Color(0xFFFFFFFF),
-                      fontSize: 14,
+                      fontSize: 16,
                     ),
                   ),
                 ],
@@ -273,42 +277,84 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     itemCount: _publicaciones!.length,
                     itemBuilder: (context, index) {
                       final publication = _publicaciones![index];
-                      return Card(
-                        margin: EdgeInsets.all(10),
-                        child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                publication.title,
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(height: 10),
-                              Text(
-                                'Descripción: ' + publication.description,
-                              ),
-                              SizedBox(height: 10),
-                              Text('Dirección: ' + publication.address),
-                              SizedBox(height: 10),
-                              Text('Técnico: ' + publication.job.name),
-                              SizedBox(height: 10),
-                              Container(
-                                width: double.infinity,
-                                height: 150,
-                                color: Colors.grey[300],
-                                child: Image.network(
-                                  publication.picture,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                    // Si hay un error al cargar la imagen, muestra un icono de error
-                                    return Center(child: Icon(Icons.error, size: 50, color: Colors.grey));
-                                  },
+                      return Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Card(
+                          child: Padding(
+                            padding: EdgeInsets.all(25),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  publication.title,
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
                                 ),
-                              ),
-                            ],
+                                SizedBox(height: 10),
+                                RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: 'Descripción: ',
+                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      TextSpan(
+                                        text: publication.description,
+                                        style: TextStyle(fontWeight: FontWeight.normal),
+                                      ),
+                                    ],
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: 'Dirección: ',
+                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      TextSpan(
+                                        text: publication.address,
+                                        style: TextStyle(fontWeight: FontWeight.normal),
+                                      ),
+                                    ],
+                                    style: TextStyle(color: Colors.black), // Color para todo el texto
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: 'Técnico: ',
+                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      TextSpan(
+                                        text: publication.job.name,
+                                        style: TextStyle(fontWeight: FontWeight.normal),
+                                      ),
+                                    ],
+                                    style: TextStyle(color: Colors.black), // Color para todo el texto
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                Container(
+                                  width: double.infinity,
+                                  height: 150,
+                                  color: Colors.grey[300],
+                                  child: Image.network(
+                                    publication.picture,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                      // Si hay un error al cargar la imagen, muestra un icono de error
+                                      return Center(child: Icon(Icons.error, size: 50, color: Colors.grey));
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
