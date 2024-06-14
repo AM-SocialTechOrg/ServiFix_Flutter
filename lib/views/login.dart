@@ -34,9 +34,9 @@ class _LogInState extends State<LogIn> {
         return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
-            top: 16,
-            left: 16,
-            right: 16,
+            top: 20,
+            left: 30,
+            right: 30,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -50,14 +50,15 @@ class _LogInState extends State<LogIn> {
                   margin: EdgeInsets.only(bottom: 16),
                 ),
               ),
+              SizedBox(height: 10),
               Text(
                 'Cambiar contraseña',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
               ),
               SizedBox(height: 8),
               Text(
                 'Ingresa una nueva contraseña para acceder a tu cuenta.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                style: TextStyle(fontSize: 16, color: Color(0xFF4D4D4D)),
               ),
               SizedBox(height: 16),
               TextField(
@@ -95,7 +96,7 @@ class _LogInState extends State<LogIn> {
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: Colors.grey,
+                  backgroundColor: Color(0xFF1769FF),
                   minimumSize: Size(double.infinity, 48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24),
@@ -103,7 +104,7 @@ class _LogInState extends State<LogIn> {
                 ),
                 child: Text('Continuar'),
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 30),
             ],
           ),
         );
@@ -119,9 +120,9 @@ class _LogInState extends State<LogIn> {
         return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
-            top: 16,
-            left: 16,
-            right: 16,
+            top: 20,
+            left: 30,
+            right: 30,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -135,14 +136,15 @@ class _LogInState extends State<LogIn> {
                   margin: EdgeInsets.only(bottom: 16),
                 ),
               ),
+              SizedBox(height: 10),
               Text(
                 'Ingresa el código',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
               ),
               SizedBox(height: 8),
               Text(
                 'Ingresa el código de 4 dígitos enviado a tu correo electrónico.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                style: TextStyle(fontSize: 16, color: Color(0xFF4D4D4D)),
               ),
               SizedBox(height: 16),
               Row(
@@ -186,7 +188,7 @@ class _LogInState extends State<LogIn> {
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: Colors.grey,
+                  backgroundColor: Color(0xFF1769FF),
                   minimumSize: Size(double.infinity, 48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24),
@@ -194,7 +196,7 @@ class _LogInState extends State<LogIn> {
                 ),
                 child: Text('Continuar'),
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 30),
             ],
           ),
         );
@@ -210,9 +212,9 @@ class _LogInState extends State<LogIn> {
         return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
-            top: 16,
-            left: 16,
-            right: 16,
+            top: 20,
+            left: 30,
+            right: 30,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -226,14 +228,15 @@ class _LogInState extends State<LogIn> {
                   margin: const EdgeInsets.only(bottom: 16),
                 ),
               ),
+              SizedBox(height: 10),
               const Text(
                 '¿Olvidaste tu contraseña?',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
               ),
               const SizedBox(height: 8),
               const Text(
                 'Ingresa tu correo electrónico para el proceso de verificación. Te enviaremos un código de 4 dígitos.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                style: TextStyle(fontSize: 16, color: Color(0xFF4D4D4D)),
               ),
               const SizedBox(height: 16),
               TextField(
@@ -255,7 +258,7 @@ class _LogInState extends State<LogIn> {
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: Colors.grey,
+                  backgroundColor: Color(0xFF1769FF),
                   minimumSize: Size(double.infinity, 48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24),
@@ -263,7 +266,7 @@ class _LogInState extends State<LogIn> {
                 ),
                 child: const Text('Continuar'),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 30),
             ],
           ),
         );
@@ -279,9 +282,9 @@ class _LogInState extends State<LogIn> {
         return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
-            top: 16,
-            left: 16,
-            right: 16,
+            top: 20,
+            left: 30,
+            right: 30,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -295,20 +298,22 @@ class _LogInState extends State<LogIn> {
                   margin: const EdgeInsets.only(bottom: 16),
                 ),
               ),
+              SizedBox(height: 10),
               Image(
                 image: AssetImage('lib/assets/tools.png'),
-                width: 70,
-                height: 70,
+                width: 60,
+                height: 60,
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 20),
               Text(
                 'Contraseña actualizada',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
               ),
               SizedBox(height: 16),
               Text(
                 'Su contraseña se ha actualizado exitosamente',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, color: Color(0xFF4D4D4D)),
               ),
               SizedBox(height: 16),
               ElevatedButton(
@@ -317,7 +322,7 @@ class _LogInState extends State<LogIn> {
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: Colors.grey,
+                  backgroundColor: Color(0xFF1769FF),
                   minimumSize: Size(double.infinity, 48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24),
@@ -325,7 +330,7 @@ class _LogInState extends State<LogIn> {
                 ),
                 child: const Text('Iniciar Sesion'),
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 30),
             ],
           ),
         );
