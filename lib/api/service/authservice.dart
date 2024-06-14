@@ -6,6 +6,7 @@ import '../dto/login_request.dart';
 import '../dto/login_response.dart';
 import '../dto/register_request.dart';
 import '../dto/register_response.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   static const String apiBase = "https://servifix-api-docker.onrender.com/api/v1/";
@@ -26,10 +27,17 @@ class AuthService {
     if (response.statusCode == 200) {
       final res = json.decode(response.body);
       final loginResponse = LoginResponse.fromJson(res);
+      await _saveUserData(loginResponse.token, loginResponse.id);
       return loginResponse;
     } else {
       throw Exception('Failed to load response: ${response.statusCode}');
     }
+  }
+
+  Future<void> _saveUserData(String token, int id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
+    await prefs.setInt('userId', id);
   }
 
   Future<RegisterResponse> register(String firstName, String lastName, String gender, String birthday, String email, String password, int role) async {

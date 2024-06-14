@@ -5,6 +5,8 @@ import 'package:servifix_flutter/api/service/userService.dart';
 import 'package:provider/provider.dart';
 import 'package:servifix_flutter/api/provider/AuthModel.dart';
 import 'package:servifix_flutter/api/service/PublicationService.dart';
+import 'package:servifix_flutter/views/Offer.dart';
+import 'package:servifix_flutter/api/preferences/userPreferences.dart';
 
 class UserProfileScreen extends StatefulWidget {
 
@@ -24,6 +26,24 @@ class UserProfileScreen extends StatefulWidget {
 }
 
   class _UserProfileScreenState extends State<UserProfileScreen> {
+
+    late String _token;
+    late int _userId;
+    late GetUserResponseByAccount _cliente;
+
+
+    Future<void> _loadUserPreferences() async {
+      ClientService clienteService = ClientService();
+      UserPreferences userPreferences = UserPreferences();
+      _token = (await userPreferences.getToken()) ?? '';
+      _userId = (await userPreferences.getUserId()) ?? 0;
+
+      GetUserResponseByAccount _cliente2 = await clienteService.getUserByAccountId(_userId, _token);
+      _cliente = _cliente2;
+    }
+
+
+
   List<Publicaticion>? _publicaciones;
 
   final PublicationService publicationService = PublicationService();
@@ -31,6 +51,7 @@ class UserProfileScreen extends StatefulWidget {
   @override
   void initState() {
     super.initState();
+    _loadUserPreferences();
   }
 
   Future<void> _fetchPublicaciones(String idcliente) async {
@@ -372,6 +393,21 @@ class UserProfileScreen extends StatefulWidget {
             ),
           ],
           currentIndex: 2,
+          onTap: (index) {
+            if (index == 0) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Offer()),
+              );
+            } else if (index == 1) {
+              Navigator.of(context).pushNamed('/search');
+            } else if (index == 2) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => UserProfileScreen(token: _token, id: _userId, cliente: _cliente)),
+              );
+            }
+          },
         ),
       ),
     );

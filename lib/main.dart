@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:servifix_flutter/views/Offer.dart';
 import 'package:servifix_flutter/views/login.dart';
-import 'package:servifix_flutter/views/user_profile.dart';
 import 'package:provider/provider.dart';
 import 'api/provider/AuthModel.dart';
 

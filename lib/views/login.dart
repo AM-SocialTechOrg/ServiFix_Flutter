@@ -12,7 +12,6 @@ import 'package:servifix_flutter/views/tech_profile.dart';
 import 'package:servifix_flutter/views/user_profile.dart';
 
 
-
 TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
 
