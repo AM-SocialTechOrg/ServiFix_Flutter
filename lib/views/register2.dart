@@ -14,6 +14,7 @@ class Register2 extends StatefulWidget {
   final String email;
   final String password;
   final String user;
+  final String phone;
 
   const Register2({
     Key? key,
@@ -25,6 +26,7 @@ class Register2 extends StatefulWidget {
     required this.email,
     required this.password,
     required this.user,
+    required this.phone,
   }) : super(key: key);
 
 
@@ -176,7 +178,8 @@ class _Register2State extends State<Register2> {
                       dni: widget.dni,
                       email: widget.email,
                       password: widget.password,
-                      user: widget.user)
+                      user: widget.user,
+                      phone: widget.phone)
                       ),
                     );
                   },

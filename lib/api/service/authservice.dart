@@ -59,7 +59,6 @@ class AuthService {
       return registerResponse;
     } else {
       print(response.body);
-
       throw Exception('Failed to load response: ${response.statusCode}');
     }
   }

@@ -390,14 +390,13 @@ class LogIn extends StatelessWidget {
                     try {
                       final loginResponse = await AuthService().login(emailController.text, passwordController.text);
                       final token = loginResponse.token;
+                      final id = loginResponse.id;
+
                       if (token.isNotEmpty) {
                         clearFields();
-                        Provider.of<Authmodel>(context, listen: false).setToken(token);
                         Navigator.push(
                           context,
-                          //MaterialPageRoute(builder: (context) => Success(token: token)),
-                          // user_publication
-                          MaterialPageRoute(builder: (context) => UserProfileScreen()),
+                          MaterialPageRoute(builder: (context) => UserProfileScreen(token: token, id: id)),
                         );
                       }
                     } catch (e) {
