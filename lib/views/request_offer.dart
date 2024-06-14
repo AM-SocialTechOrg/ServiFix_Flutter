@@ -37,7 +37,7 @@ class _OfferState extends State<RequestOffer> {
     GetUserResponseByAccount _cliente = await clienteService.getUserByAccountId(userId, token);
     cliente = _cliente;
     setState(() {
-      _publicationsFuture = PublicationService().getPublications('5', token);
+      _publicationsFuture = PublicationService().getPublications(cliente.id.toString(), token);
     });
   }
 
