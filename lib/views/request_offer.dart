@@ -4,15 +4,15 @@ import 'package:servifix_flutter/views/user_profile.dart';
 import 'package:servifix_flutter/api/dto/get_user_response_by_account.dart';
 import 'package:servifix_flutter/api/service/userService.dart';
 
-class Offer extends StatefulWidget {
-  const Offer({Key? key}) :super(key: key);
+class RequestOffer extends StatefulWidget {
+  const RequestOffer({Key? key}) :super(key: key);
 
 
   @override
-  State<Offer> createState() => _OfferState();
+  State<RequestOffer> createState() => _OfferState();
 }
 
-class _OfferState extends State<Offer> {
+class _OfferState extends State<RequestOffer> {
   late String token;
   late int userId;
   late GetUserResponseByAccount cliente;
@@ -152,14 +152,27 @@ class _OfferState extends State<Offer> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.filter_list),
-          onPressed: () {},
-        ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {},
+          Container(
+            margin: EdgeInsets.only(right: 16.0),
+            child: IconButton(
+              icon: Icon(Icons.filter_list),
+              onPressed: () {},
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: Text('Solicitudes',
+                  style: TextStyle(fontSize: 20)
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 16.0),
+            child: IconButton(
+              icon: Icon(Icons.notifications),
+              onPressed: () {},
+            ),
           ),
         ],
       ),
@@ -234,7 +247,7 @@ class _OfferState extends State<Offer> {
           if (index == 0) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Offer()),
+              MaterialPageRoute(builder: (context) => RequestOffer()),
             );
           } else if (index == 1) {
             Navigator.of(context).pushNamed('/search');

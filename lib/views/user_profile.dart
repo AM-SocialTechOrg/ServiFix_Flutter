@@ -5,7 +5,7 @@ import 'package:servifix_flutter/api/service/userService.dart';
 import 'package:provider/provider.dart';
 import 'package:servifix_flutter/api/provider/AuthModel.dart';
 import 'package:servifix_flutter/api/service/PublicationService.dart';
-import 'package:servifix_flutter/views/Offer.dart';
+import 'package:servifix_flutter/views/request_offer.dart';
 import 'package:servifix_flutter/api/preferences/userPreferences.dart';
 
 class UserProfileScreen extends StatefulWidget {
@@ -397,7 +397,7 @@ class UserProfileScreen extends StatefulWidget {
             if (index == 0) {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Offer()),
+                MaterialPageRoute(builder: (context) => RequestOffer()),
               );
             } else if (index == 1) {
               Navigator.of(context).pushNamed('/search');
