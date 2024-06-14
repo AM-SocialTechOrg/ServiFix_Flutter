@@ -13,12 +13,6 @@ class _notificationState extends State<notification> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          Container(
-            child: IconButton(
-              icon: Icon(Icons.arrow_back_outlined),
-              onPressed: () {},
-            ),
-          ),
           Expanded(
             child: Center(
               child: Text('Notificaciones',

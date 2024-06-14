@@ -3,6 +3,7 @@ import 'package:servifix_flutter/api/preferences/userPreferences.dart';
 import 'package:servifix_flutter/views/user_profile.dart';
 import 'package:servifix_flutter/api/dto/get_user_response_by_account.dart';
 import 'package:servifix_flutter/api/service/userService.dart';
+import 'package:servifix_flutter/views/notification.dart';
 
 class RequestOffer extends StatefulWidget {
   const RequestOffer({Key? key}) :super(key: key);
@@ -79,7 +80,7 @@ class _OfferState extends State<RequestOffer> {
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[800],
+                      backgroundColor: Colors.green[800],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
@@ -100,7 +101,7 @@ class _OfferState extends State<RequestOffer> {
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[800],
+                      backgroundColor: Colors.blue[800],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
@@ -121,7 +122,7 @@ class _OfferState extends State<RequestOffer> {
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[800],
+                      backgroundColor: Colors.red[800],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
@@ -157,7 +158,8 @@ class _OfferState extends State<RequestOffer> {
             margin: EdgeInsets.only(right: 16.0),
             child: IconButton(
               icon: Icon(Icons.filter_list),
-              onPressed: () {},
+              onPressed: () {
+              },
             ),
           ),
           Expanded(
@@ -171,7 +173,12 @@ class _OfferState extends State<RequestOffer> {
             margin: EdgeInsets.only(left: 16.0),
             child: IconButton(
               icon: Icon(Icons.notifications),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => notification()),
+                );
+              },
             ),
           ),
         ],
