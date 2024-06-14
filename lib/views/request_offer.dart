@@ -9,8 +9,7 @@ import 'package:servifix_flutter/api/service/PublicationService.dart';
 import 'package:servifix_flutter/api/dto/publication_response.dart';
 
 class RequestOffer extends StatefulWidget {
-  const RequestOffer({Key? key}) :super(key: key);
-
+  const RequestOffer({Key? key}) : super(key: key);
 
   @override
   State<RequestOffer> createState() => _OfferState();
@@ -20,7 +19,7 @@ class _OfferState extends State<RequestOffer> {
   late String token;
   late int userId;
   late GetUserResponseByAccount cliente;
-  late Future<List<PublicationResponse>> _publicationsFuture;
+  Future<List<PublicationResponse>>? _publicationsFuture; // nullable future
 
   @override
   void initState() {
@@ -34,21 +33,21 @@ class _OfferState extends State<RequestOffer> {
     token = (await userPreferences.getToken()) ?? '';
     userId = (await userPreferences.getUserId()) ?? 0;
 
-    GetUserResponseByAccount _cliente = await clienteService.getUserByAccountId(userId, token);
+    GetUserResponseByAccount _cliente =
+    await clienteService.getUserByAccountId(userId, token);
     cliente = _cliente;
+
     setState(() {
-      _publicationsFuture = PublicationService().getPublications(cliente.id.toString(), token);
+      _publicationsFuture =
+          PublicationService().getPublications(cliente.id.toString(), token);
     });
   }
 
-
-  Widget _buildRequestCard(
-      BuildContext context, {
-        required String title,
+  Widget _buildRequestCard(BuildContext context,
+      {required String title,
         required String address,
         required String technician,
-        required String description,
-      }) {
+        required String description}) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -60,7 +59,9 @@ class _OfferState extends State<RequestOffer> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                  Text(
+                    title,
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
                   Text(
@@ -183,24 +184,25 @@ class _OfferState extends State<RequestOffer> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         actions: [
-          Container(
-            margin: EdgeInsets.only(right: 16.0),
+         Container(
+            margin: EdgeInsets.only(right: 16.0, left: 5.0),
             child: IconButton(
               icon: Icon(Icons.filter_list),
-              onPressed: () {
-              },
+              onPressed: () {},
             ),
           ),
           Expanded(
             child: Center(
-              child: Text('Solicitudes',
-                  style: TextStyle(fontSize: 20)
+              child: Text(
+                'Solicitudes',
+                style: TextStyle(fontSize: 20),
               ),
             ),
           ),
           Container(
-            margin: EdgeInsets.only(left: 16.0),
+            margin: EdgeInsets.only(left: 16.0, right: 5.0),
             child: IconButton(
               icon: Icon(Icons.notifications),
               onPressed: () {
@@ -215,15 +217,18 @@ class _OfferState extends State<RequestOffer> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: FutureBuilder<List<PublicationResponse>>(
-          future: _publicationsFuture,
+        child: _publicationsFuture == null
+            ? Center(child: CircularProgressIndicator())
+            : FutureBuilder<List<PublicationResponse>>(
+          future: _publicationsFuture!,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No se encontraron publicaciones.'));
+              return Center(
+                  child: Text('No se encontraron publicaciones.'));
             } else {
               final publications = snapshot.data!;
               return ListView.builder(
@@ -270,7 +275,9 @@ class _OfferState extends State<RequestOffer> {
           } else if (index == 2) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => UserProfileScreen(token: token, id: userId, cliente: cliente)),
+              MaterialPageRoute(
+                  builder: (context) =>
+                      UserProfileScreen(token: token, id: userId, cliente: cliente)),
             );
           }
         },

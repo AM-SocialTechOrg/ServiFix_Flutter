@@ -5,17 +5,21 @@ import 'package:servifix_flutter/api/service/technicalService.dart';
 import 'package:servifix_flutter/api/service/userService.dart';
 import 'package:servifix_flutter/views/register1.dart';
 import 'package:servifix_flutter/api/service/authservice.dart';
-import 'package:servifix_flutter/views/success.dart';
-import 'package:provider/provider.dart';
-import 'package:servifix_flutter/api/provider/AuthModel.dart';
 import 'package:servifix_flutter/views/tech_profile.dart';
 import 'package:servifix_flutter/views/user_profile.dart';
-
 
 TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
 
-class LogIn extends StatelessWidget {
+class LogIn extends StatefulWidget {
+  const LogIn({super.key});
+
+  @override
+  _LogInState createState() => _LogInState();
+}
+
+class _LogInState extends State<LogIn> {
+  String _errorMessage = '';
 
   void clearFields() {
     emailController.clear();
@@ -90,7 +94,9 @@ class LogIn extends StatelessWidget {
                   _showUpdatedPasswordSheet(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.grey, minimumSize: Size(double.infinity, 48),
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.grey,
+                  minimumSize: Size(double.infinity, 48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24),
                   ),
@@ -179,7 +185,9 @@ class LogIn extends StatelessWidget {
                   _showResetPasswordSheet(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.grey, minimumSize: Size(double.infinity, 48),
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.grey,
+                  minimumSize: Size(double.infinity, 48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24),
                   ),
@@ -246,7 +254,9 @@ class LogIn extends StatelessWidget {
                   _showVerificationCodeSheet(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.grey, minimumSize: Size(double.infinity, 48),
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.grey,
+                  minimumSize: Size(double.infinity, 48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24),
                   ),
@@ -261,71 +271,70 @@ class LogIn extends StatelessWidget {
     );
   }
 
-  void _showUpdatedPasswordSheet(BuildContext context){
+  void _showUpdatedPasswordSheet(BuildContext context) {
     showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (BuildContext context){
-          return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-                top: 16,
-                left: 16,
-                right: 16,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            top: 16,
+            left: 16,
+            right: 16,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Center(
+                child: Container(
+                  height: 4,
+                  width: 40,
+                  color: Colors.grey[300],
+                  margin: const EdgeInsets.only(bottom: 16),
+                ),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Center(
-                    child: Container(
-                      height: 4,
-                      width: 40,
-                      color: Colors.grey[300],
-                      margin: const EdgeInsets.only(bottom: 16),
-                    ),
-                  ),
-                  Image(
-                    image: AssetImage('lib/assets/tools.png'),
-                    width: 70,
-                    height: 70,
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Contraseña actualizada',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Su contraseña se ha actualizado exitosamente',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white, backgroundColor: Colors.grey, minimumSize: Size(double.infinity, 48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                    ),
-                    child: const Text('Iniciar Sesion'),
-                  ),
-                  SizedBox(height: 16),
-                ],
+              Image(
+                image: AssetImage('lib/assets/tools.png'),
+                width: 70,
+                height: 70,
               ),
-          );
-        },
+              SizedBox(height: 16),
+              Text(
+                'Contraseña actualizada',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Su contraseña se ha actualizado exitosamente',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.grey,
+                  minimumSize: Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                ),
+                child: const Text('Iniciar Sesion'),
+              ),
+              SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  const LogIn({super.key});
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -389,6 +398,13 @@ class LogIn extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 16),
+                if (_errorMessage.isNotEmpty)
+                  Text(
+                    _errorMessage,
+                    style: TextStyle(color: Colors.red,
+                    ),
+                  ),
+                SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () async {
                     try {
@@ -410,6 +426,9 @@ class LogIn extends StatelessWidget {
                           await clienteService.getUserByAccountId(id, token);
                           _cliente = cliente;
                           _tecnico = null;
+                          setState(() {
+                            _errorMessage = '';
+                          });
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => UserProfileScreen(token: token, id: id, cliente: cliente)),
@@ -424,6 +443,9 @@ class LogIn extends StatelessWidget {
                             await tecnicoService.getTechnicianByAccountId(id, token);
                             _tecnico = tecnico;
                             _cliente = null;
+                            setState(() {
+                              _errorMessage = '';
+                            });
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => TechnicalProfileScreen(token: token, id: id, technical: tecnico)),
@@ -435,6 +457,13 @@ class LogIn extends StatelessWidget {
                         clearFields();
                       }
                     } catch (e) {
+                      setState(() {
+                        if (e.toString().contains('Bad credentials')) {
+                          _errorMessage = 'Error: Credenciales inválidas';
+                        } else {
+                          _errorMessage = 'Error de inicio de sesión: ${e.toString()}';
+                        }
+                      });
                       print('Error de inicio de sesión: $e');
                     }
                   },

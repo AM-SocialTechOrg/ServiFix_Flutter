@@ -1,5 +1,4 @@
 import 'dart:ffi';
-
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../dto/login_request.dart';
@@ -30,7 +29,9 @@ class AuthService {
       await _saveUserData(loginResponse.token, loginResponse.id);
       return loginResponse;
     } else {
-      throw Exception('Failed to load response: ${response.statusCode}');
+      final res = json.decode(response.body);
+      final errorMessage = res['message'] ?? 'Failed to load response';
+      throw Exception(errorMessage);
     }
   }
 
@@ -67,9 +68,9 @@ class AuthService {
       return registerResponse;
     } else {
       print(response.body);
-      throw Exception('Failed to load response: ${response.statusCode}');
+      final res = json.decode(response.body);
+      final errorMessage = res['message'] ?? 'Failed to load response';
+      throw Exception(errorMessage);
     }
   }
-
-
 }

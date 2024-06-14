@@ -168,15 +168,15 @@ class _offerState extends State<offer> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(left: 18, right: 18, top: 0, bottom: 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Ofrezco servicios para pintar paredes externas',
+            /*Text('Ofrezco servicios para pintar paredes externas',
                 style: TextStyle(
                   fontSize: 15,
                 )
-            ),
+            ),*/
             Row(
               children: [
                 IconButton(onPressed: (){}, icon: Icon(Icons.sort)),
@@ -184,7 +184,7 @@ class _offerState extends State<offer> {
                 Text('Ordenar por:'),
               ]
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 5),
             Expanded(
               child: ListView(
                 children: [
