@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:servifix_flutter/api/dto/get_technical_response_by_account.dart';
+import 'package:servifix_flutter/api/dto/get_user_response_by_account.dart';
+import 'package:servifix_flutter/api/service/technicalService.dart';
+import 'package:servifix_flutter/api/service/userService.dart';
 import 'package:servifix_flutter/views/register1.dart';
 import 'package:servifix_flutter/api/service/authservice.dart';
 import 'package:servifix_flutter/views/success.dart';
 import 'package:provider/provider.dart';
 import 'package:servifix_flutter/api/provider/AuthModel.dart';
+import 'package:servifix_flutter/views/tech_profile.dart';
 import 'package:servifix_flutter/views/user_profile.dart';
 
 
@@ -392,12 +397,43 @@ class LogIn extends StatelessWidget {
                       final token = loginResponse.token;
                       final id = loginResponse.id;
 
+                      print('Token: $token');
+                      print('Id: $id');
+
                       if (token.isNotEmpty) {
+                        ClientService clienteService = ClientService();
+                        TechnicalService tecnicoService = TechnicalService();
+                        GetUserResponseByAccount? _cliente;
+                        GetTechnicalResponseByAccount? _tecnico;
+
+                        try {
+                          GetUserResponseByAccount cliente =
+                          await clienteService.getUserByAccountId(id, token);
+                          _cliente = cliente;
+                          _tecnico = null;
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => UserProfileScreen(token: token, id: id, cliente: cliente)),
+                          );
+                        } catch (e) {
+                          print('Error al obtener el cliente: $e');
+                        }
+
+                        if (_cliente == null) {
+                          try {
+                            GetTechnicalResponseByAccount tecnico =
+                            await tecnicoService.getTechnicianByAccountId(id, token);
+                            _tecnico = tecnico;
+                            _cliente = null;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => TechnicalProfileScreen(token: token, id: id, technical: tecnico)),
+                            );
+                          } catch (e) {
+                            print('Error al obtener el técnico: $e');
+                          }
+                        }
                         clearFields();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => UserProfileScreen(token: token, id: id)),
-                        );
                       }
                     } catch (e) {
                       print('Error de inicio de sesión: $e');

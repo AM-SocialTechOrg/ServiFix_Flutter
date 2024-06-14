@@ -62,7 +62,7 @@ class _Register1State extends State<Register1> {
   Future<void> _registerUser(BuildContext context) async {
     String originalDateTime = _selectedBirthday.toString();
     String dateWithoutTime = originalDateTime.substring(0, 10);
-    int _role = (_selectedUser == 'client') ? 1 : 2;
+    int _role = 1;
 
     try {
       final registerResponse = await AuthService().register(
@@ -88,10 +88,6 @@ class _Register1State extends State<Register1> {
       }
     } catch (e) {
       print('Error de registro: $e');
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => LogIn()),
-      );
     }
   }
 
@@ -108,7 +104,10 @@ class _Register1State extends State<Register1> {
   Future<void> _createAccount(BuildContext context, String dateWithoutTime, int role, String token, int id) async {
     try {
       await _createUser(context, token, id);
-
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LogIn()),
+      );
     } catch (e) {
       print('Error al crear la cuenta: $e');
     }

@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:servifix_flutter/api/dto/get_technical_response_by_account.dart';
 import 'package:servifix_flutter/api/dto/get_user_response_by_account.dart';
 import 'package:servifix_flutter/api/model/publication.dart';
 import 'package:servifix_flutter/api/service/userService.dart';
 import 'package:provider/provider.dart';
 import 'package:servifix_flutter/api/provider/AuthModel.dart';
-import 'package:servifix_flutter/api/service/technicalService.dart';
 import 'package:servifix_flutter/api/service/PublicationService.dart';
 
 class UserProfileScreen extends StatefulWidget {
 
   final String token;
   final int id;
+  final GetUserResponseByAccount cliente;
 
   const UserProfileScreen({
     Key? key,
     required this.token,
-    required this.id
+    required this.id,
+    required this.cliente
   }): super(key: key);
 
   @override
@@ -24,46 +24,14 @@ class UserProfileScreen extends StatefulWidget {
 }
 
   class _UserProfileScreenState extends State<UserProfileScreen> {
-  GetUserResponseByAccount? _cliente;
-  GetTechnicalResponseByAccount? _tecnico;
   List<Publicaticion>? _publicaciones;
 
-  final ClientService clienteService = ClientService();
-  final TechnicalService technicalService = TechnicalService();
   final PublicationService publicationService = PublicationService();
 
   @override
   void initState() {
     super.initState();
-    print("initState for ProfileScreen");
-    print('ID: ' + widget.id.toString());
-    print('TOKEN: ' + widget.token.toString());
-    _fetchPersona();
   }
-
-  Future<void> _fetchPersona() async {
-    try {
-      GetUserResponseByAccount cliente = await clienteService.getUserByAccountId(widget.id, widget.token);
-      setState(() {
-        _cliente = cliente;
-        _tecnico = null;
-      });
-      _fetchPublicaciones(_cliente!.id.toString());
-    } catch (e) {
-      print('Error al obtener el cliente: $e');
-      try {
-        GetTechnicalResponseByAccount tecnico = await technicalService.getTechnicianByAccountId(widget.id, widget.token);
-        print('Tecnico: ' + tecnico.toString());
-        setState(() {
-          _tecnico = tecnico;
-          _cliente = null;
-        });
-      } catch (e) {
-        print('Error al obtener el técnico: $e');
-      }
-    }
-  }
-
 
   Future<void> _fetchPublicaciones(String idcliente) async {
     try {
@@ -80,7 +48,6 @@ class UserProfileScreen extends StatefulWidget {
   }
 
   void _showServiceRequestForm(BuildContext context) {
-    String token = Provider.of<Authmodel>(context, listen: false).getToken;
 
     showModalBottomSheet(
       context: context,
@@ -238,29 +205,24 @@ class UserProfileScreen extends StatefulWidget {
             CircleAvatar(
               radius: 50,
               backgroundColor: Colors.grey[300],
-              backgroundImage: _cliente != null && _cliente!.image != null
-                  ? NetworkImage(_cliente!.image)
+              backgroundImage:  widget.cliente.image != null
+                  ? NetworkImage(widget.cliente.image)
                   : null,
             ),
             SizedBox(height: 10),
             Text(
-              _cliente != null && _cliente!.account!= null
-                  ? _cliente!.account.firstName + ' ' + _cliente!.account.lastName
-                  : _tecnico != null && _tecnico!.account!= null
-                  ? _tecnico!.account.firstName + ' ' + _tecnico!.account.lastName
+              widget.cliente != null
+                  ? widget.cliente.account.firstName + ' ' + widget.cliente.account.lastName
                   : 'Cargando...',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              _cliente != null && _cliente!.account!= null
+              widget.cliente != null
                   ? 'Cliente'
-                  : _tecnico != null && _tecnico!.account!= null
-                  ? 'Técnico'
                   : 'Cargando...',
             ),
             SizedBox(height: 20),
-            _cliente != null && _cliente!.account!= null
-                ? ElevatedButton(
+            ElevatedButton(
               onPressed: () => _showServiceRequestForm(context),
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
@@ -287,140 +249,7 @@ class UserProfileScreen extends StatefulWidget {
                   ),
                 ],
               ),
-            )
-                : Padding(
-                  padding: const EdgeInsets.only(left: 40.0, right: 40.0, bottom: 0, top: 5.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: 140,
-                            padding: EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Color(0xFFF4F4F4), width: 1.0),
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.build, // Icono de herramienta
-                                  color: Color(0xFF4D4D4D),
-                                ),
-                                SizedBox(width: 8),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '10', // Número de servicios
-                                      style: TextStyle(
-                                        color: Color(0xFF4D4D4D),
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Servicios',
-                                      style: TextStyle(
-                                        color: Color(0xFF4D4D4D),
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                          Container(
-                            width: 140,
-                            padding: EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Color(0xFFF4F4F4), width: 1.0),
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.star, // Icono de estrella
-                                  color: Color(0xFF4D4D4D),
-                                ),
-                                SizedBox(width: 8),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-
-                                  children: [
-                                    Text(
-                                      '4.5', // Calificación
-                                      style: TextStyle(
-                                        color: Color(0xFF4D4D4D),
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Calificación',
-                                      style: TextStyle(
-                                        color: Color(0xFF4D4D4D),
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 16),
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.all(10.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(color:Color(0xFFF4F4F4), width: 1.0),
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Text(_tecnico!.description.toString(),
-                          style: TextStyle(
-                            color: Color(0xFF4D4D4D),
-                          )
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          backgroundColor: Color(0xFF1769FF),
-                          elevation: 0,
-                          padding: EdgeInsets.symmetric(horizontal: 90),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Icon(
-                              Icons.edit_note,
-                              color: Colors.white,
-                            ),
-                            SizedBox(width: 8),
-                            Text(
-                              'Editar',
-                              style: TextStyle(
-                                color: Color(0xFFFFFFFF),
-                                fontSize: 16,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ]
-                              ),
-                ),
+            ),
             SizedBox(height: 20),
             TabBar(
               tabs: [
