@@ -3,6 +3,10 @@ import 'package:servifix_flutter/api/preferences/userPreferences.dart';
 import 'package:servifix_flutter/views/user_profile.dart';
 import 'package:servifix_flutter/api/dto/get_user_response_by_account.dart';
 import 'package:servifix_flutter/api/service/userService.dart';
+import 'package:servifix_flutter/views/notification.dart';
+import 'package:servifix_flutter/views/offer.dart';
+import 'package:servifix_flutter/api/service/PublicationService.dart';
+import 'package:servifix_flutter/api/dto/publication_response.dart';
 
 class RequestOffer extends StatefulWidget {
   const RequestOffer({Key? key}) :super(key: key);
@@ -16,6 +20,7 @@ class _OfferState extends State<RequestOffer> {
   late String token;
   late int userId;
   late GetUserResponseByAccount cliente;
+  late Future<List<PublicationResponse>> _publicationsFuture;
 
   @override
   void initState() {
@@ -31,6 +36,9 @@ class _OfferState extends State<RequestOffer> {
 
     GetUserResponseByAccount _cliente = await clienteService.getUserByAccountId(userId, token);
     cliente = _cliente;
+    setState(() {
+      _publicationsFuture = PublicationService().getPublications('5', token);
+    });
   }
 
 
@@ -77,13 +85,18 @@ class _OfferState extends State<RequestOffer> {
               child: Column(
                 children: [
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => offer()),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[800],
+                      backgroundColor: Colors.green[800],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      padding: EdgeInsets.zero,
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                       minimumSize: Size(0, 28),
                     ),
                     child: Row(
@@ -92,7 +105,13 @@ class _OfferState extends State<RequestOffer> {
                       children: [
                         Icon(Icons.local_offer, size: 16, color: Colors.white),
                         SizedBox(width: 4),
-                        Text('Ver ofertas', style: TextStyle(fontSize: 10, color: Colors.white),
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              'Ver ofertas',
+                              style: TextStyle(fontSize: 10, color: Colors.white),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -100,11 +119,11 @@ class _OfferState extends State<RequestOffer> {
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[800],
+                      backgroundColor: Colors.blue[800],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      padding: EdgeInsets.zero,
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                       minimumSize: Size(0, 28),
                     ),
                     child: Row(
@@ -113,7 +132,13 @@ class _OfferState extends State<RequestOffer> {
                       children: [
                         Icon(Icons.edit, size: 16, color: Colors.white),
                         SizedBox(width: 4),
-                        Text('Editar', style: TextStyle(fontSize: 10, color: Colors.white),
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              'Editar',
+                              style: TextStyle(fontSize: 10, color: Colors.white),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -121,11 +146,11 @@ class _OfferState extends State<RequestOffer> {
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[800],
+                      backgroundColor: Colors.red[800],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      padding: EdgeInsets.zero,
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                       minimumSize: Size(0, 28),
                     ),
                     child: Row(
@@ -134,7 +159,13 @@ class _OfferState extends State<RequestOffer> {
                       children: [
                         Icon(Icons.delete, size: 16, color: Colors.white),
                         SizedBox(width: 4),
-                        Text('Eliminar', style: TextStyle(fontSize: 10, color: Colors.white),
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              'Eliminar',
+                              style: TextStyle(fontSize: 10, color: Colors.white),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -157,7 +188,8 @@ class _OfferState extends State<RequestOffer> {
             margin: EdgeInsets.only(right: 16.0),
             child: IconButton(
               icon: Icon(Icons.filter_list),
-              onPressed: () {},
+              onPressed: () {
+              },
             ),
           ),
           Expanded(
@@ -171,60 +203,44 @@ class _OfferState extends State<RequestOffer> {
             margin: EdgeInsets.only(left: 16.0),
             child: IconButton(
               icon: Icon(Icons.notifications),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => notification()),
+                );
+              },
             ),
           ),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.search),
-                hintText: 'Buscar por técnico',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Mis solicitudes',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            Expanded(
-              child: ListView(
-                children: [
-                  _buildRequestCard(
+        child: FutureBuilder<List<PublicationResponse>>(
+          future: _publicationsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('No se encontraron publicaciones.'));
+            } else {
+              final publications = snapshot.data!;
+              return ListView.builder(
+                itemCount: publications.length,
+                itemBuilder: (context, index) {
+                  final publication = publications[index];
+                  return _buildRequestCard(
                     context,
-                    title: 'Reparación de fuga en baño',
-                    address: 'Calle Principal #123, Lima',
-                    technician: 'Gasfitero',
-                    description:
-                    'Se necesita un gasfitero experimentado para reparar una fuga...',
-                  ),
-                  SizedBox(height: 10),
-                  _buildRequestCard(
-                    context,
-                    title: 'Instalación de Calentador de Agua',
-                    address: 'Calle Principal #123, Lima',
-                    technician: 'Gasfitero',
-                    description:
-                    'Necesitamos un técnico especializado en instalaciones de font...',
-                  ),
-                ],
-              ),
-            ),
-          ],
+                    title: publication.title,
+                    address: publication.address,
+                    technician: publication.job.name,
+                    description: publication.description,
+                  );
+                },
+              );
+            }
+          },
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(

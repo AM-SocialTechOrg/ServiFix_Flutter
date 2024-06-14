@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../model/publication.dart';
+//import '../model/publication.dart';
+import 'package:servifix_flutter/api/dto/publication_response.dart';
 
 class PublicationService {
 
@@ -11,7 +12,7 @@ Get all publications by user
 
 Parameters
 * */
-  Future<List<Publicaticion> > getPublications(String id,String TokenModel) async {
+  Future<List<PublicationResponse> > getPublications(String id,String TokenModel) async {
     String token = TokenModel;
 
     final response = await http.get(
@@ -26,7 +27,7 @@ Parameters
       print( "respuesta json:" + res.toString());
 
       if (res['data'] != null) {
-        List<Publicaticion> publicationResponse = (res['data'] as List).map((i) => Publicaticion.fromJson(i)).toList();
+        List<PublicationResponse> publicationResponse = (res['data'] as List).map((i) => PublicationResponse.fromJson(i)).toList();
         return publicationResponse;
       } else {
         throw Exception('The response does not contain a "data" field');

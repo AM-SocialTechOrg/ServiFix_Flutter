@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:servifix_flutter/views/notification.dart';
 import 'package:servifix_flutter/views/request_offer.dart';
 import 'package:servifix_flutter/views/login.dart';
+import 'package:servifix_flutter/views/offer.dart';
 import 'package:provider/provider.dart';
 import 'api/provider/AuthModel.dart';
 
@@ -29,7 +30,6 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: LogIn(),
-      //home : ProfileScreen(),
     );
   }
 }
