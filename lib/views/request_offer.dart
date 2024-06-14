@@ -4,6 +4,7 @@ import 'package:servifix_flutter/views/user_profile.dart';
 import 'package:servifix_flutter/api/dto/get_user_response_by_account.dart';
 import 'package:servifix_flutter/api/service/userService.dart';
 import 'package:servifix_flutter/views/notification.dart';
+import 'package:servifix_flutter/views/offer.dart';
 
 class RequestOffer extends StatefulWidget {
   const RequestOffer({Key? key}) :super(key: key);
@@ -78,13 +79,18 @@ class _OfferState extends State<RequestOffer> {
               child: Column(
                 children: [
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => offer()),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green[800],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      padding: EdgeInsets.zero,
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                       minimumSize: Size(0, 28),
                     ),
                     child: Row(
@@ -93,7 +99,13 @@ class _OfferState extends State<RequestOffer> {
                       children: [
                         Icon(Icons.local_offer, size: 16, color: Colors.white),
                         SizedBox(width: 4),
-                        Text('Ver ofertas', style: TextStyle(fontSize: 10, color: Colors.white),
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              'Ver ofertas',
+                              style: TextStyle(fontSize: 10, color: Colors.white),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -105,7 +117,7 @@ class _OfferState extends State<RequestOffer> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      padding: EdgeInsets.zero,
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                       minimumSize: Size(0, 28),
                     ),
                     child: Row(
@@ -114,7 +126,13 @@ class _OfferState extends State<RequestOffer> {
                       children: [
                         Icon(Icons.edit, size: 16, color: Colors.white),
                         SizedBox(width: 4),
-                        Text('Editar', style: TextStyle(fontSize: 10, color: Colors.white),
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              'Editar',
+                              style: TextStyle(fontSize: 10, color: Colors.white),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -126,7 +144,7 @@ class _OfferState extends State<RequestOffer> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      padding: EdgeInsets.zero,
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                       minimumSize: Size(0, 28),
                     ),
                     child: Row(
@@ -135,7 +153,13 @@ class _OfferState extends State<RequestOffer> {
                       children: [
                         Icon(Icons.delete, size: 16, color: Colors.white),
                         SizedBox(width: 4),
-                        Text('Eliminar', style: TextStyle(fontSize: 10, color: Colors.white),
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              'Eliminar',
+                              style: TextStyle(fontSize: 10, color: Colors.white),
+                            ),
+                          ),
                         ),
                       ],
                     ),
