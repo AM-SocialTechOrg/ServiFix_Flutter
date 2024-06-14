@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:servifix_flutter/api/dto/get_user_response_by_account.dart';
+import 'package:servifix_flutter/api/dto/publication_response.dart';
 import 'package:servifix_flutter/api/model/publication.dart';
 import 'package:servifix_flutter/api/service/userService.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +10,6 @@ import 'package:servifix_flutter/views/request_offer.dart';
 import 'package:servifix_flutter/api/preferences/userPreferences.dart';
 
 class UserProfileScreen extends StatefulWidget {
-
   final String token;
   final int id;
   final GetUserResponseByAccount cliente;
@@ -18,56 +18,44 @@ class UserProfileScreen extends StatefulWidget {
     Key? key,
     required this.token,
     required this.id,
-    required this.cliente
-  }): super(key: key);
+    required this.cliente,
+  }) : super(key: key);
 
   @override
   _UserProfileScreenState createState() => _UserProfileScreenState();
 }
 
-  class _UserProfileScreenState extends State<UserProfileScreen> {
-
-    late String _token;
-    late int _userId;
-    late GetUserResponseByAccount _cliente;
-
-
-    Future<void> _loadUserPreferences() async {
-      ClientService clienteService = ClientService();
-      UserPreferences userPreferences = UserPreferences();
-      _token = (await userPreferences.getToken()) ?? '';
-      _userId = (await userPreferences.getUserId()) ?? 0;
-
-      GetUserResponseByAccount _cliente2 = await clienteService.getUserByAccountId(_userId, _token);
-      _cliente = _cliente2;
-    }
-
-
-
-  List<Publicaticion>? _publicaciones;
+class _UserProfileScreenState extends State<UserProfileScreen> {
+  late String _token;
+  late int _userId;
+  late GetUserResponseByAccount _cliente;
+  Future<List<PublicationResponse>>? _publicationsFuture;
 
   final PublicationService publicationService = PublicationService();
+  final ClientService clienteService = ClientService();
 
   @override
   void initState() {
     super.initState();
     _loadUserPreferences();
   }
-/*
-  Future<void> _fetchPublicaciones(String idcliente) async {
-    try {
-      _publicaciones = await publicationService.getPublications(idcliente, widget.token);
-      setState(() {
-        print('Publicaciones: prueba con id');
-        _publicaciones!.forEach((element) {
-          print("titulo de la publicacion: " + element.toString());
-        });
-      });
-    } catch (e) {
-      print('Error: No devuelve las publicaciones ' + e.toString());
-    }
+
+  Future<void> _loadUserPreferences() async {
+    UserPreferences userPreferences = UserPreferences();
+    _token = (widget.token) ?? '';
+    _userId = (widget.id) ?? 0;
+
+    print(_token);
+    print(_userId);
+
+    GetUserResponseByAccount cliente = await clienteService.getUserByAccountId(_userId, _token);
+
+    setState(() {
+      _cliente = cliente;
+      _publicationsFuture = publicationService.getPublications(cliente.id.toString(), _token);
+    });
   }
-*/
+
   void _showServiceRequestForm(BuildContext context) {
 
     showModalBottomSheet(
@@ -203,6 +191,7 @@ class UserProfileScreen extends StatefulWidget {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -226,7 +215,7 @@ class UserProfileScreen extends StatefulWidget {
             CircleAvatar(
               radius: 50,
               backgroundColor: Colors.grey[300],
-              backgroundImage:  widget.cliente.image != null
+              backgroundImage: widget.cliente.image != null
                   ? NetworkImage(widget.cliente.image)
                   : null,
             ),
@@ -238,9 +227,7 @@ class UserProfileScreen extends StatefulWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              widget.cliente != null
-                  ? 'Cliente'
-                  : 'Cargando...',
+              widget.cliente != null ? 'Cliente' : 'Cargando...',
             ),
             SizedBox(height: 20),
             ElevatedButton(
@@ -283,94 +270,106 @@ class UserProfileScreen extends StatefulWidget {
             Expanded(
               child: TabBarView(
                 children: [
-                  _publicaciones != null
-                      ? ListView.builder(
-                    itemCount: _publicaciones!.length,
-                    itemBuilder: (context, index) {
-                      final publication = _publicaciones![index];
-                      return Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Card(
-                          child: Padding(
-                            padding: EdgeInsets.all(25),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  publication.title,
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(height: 10),
-                                RichText(
-                                  text: TextSpan(
+                  FutureBuilder<List<PublicationResponse>>(
+                    future: _publicationsFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error al cargar las publicaciones'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(child: Text('No hay publicaciones'));
+                      } else {
+                        return ListView.builder(
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            final publication = snapshot.data![index];
+                            return Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Card(
+                                child: Padding(
+                                  padding: EdgeInsets.all(25),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      TextSpan(
-                                        text: 'Descripción: ',
-                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                      Text(
+                                        publication.title,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                      TextSpan(
-                                        text: publication.description,
-                                        style: TextStyle(fontWeight: FontWeight.normal),
+                                      SizedBox(height: 10),
+                                      RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: 'Descripción: ',
+                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                            ),
+                                            TextSpan(
+                                              text: publication.description,
+                                              style: TextStyle(fontWeight: FontWeight.normal),
+                                            ),
+                                          ],
+                                          style: TextStyle(color: Colors.black),
+                                        ),
+                                      ),
+                                      SizedBox(height: 10),
+                                      RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: 'Dirección: ',
+                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                            ),
+                                            TextSpan(
+                                              text: publication.address,
+                                              style: TextStyle(fontWeight: FontWeight.normal),
+                                            ),
+                                          ],
+                                          style: TextStyle(color: Colors.black),
+                                        ),
+                                      ),
+                                      SizedBox(height: 10),
+                                      RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: 'Técnico: ',
+                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                            ),
+                                            TextSpan(
+                                              text: publication.job.name,
+                                              style: TextStyle(fontWeight: FontWeight.normal),
+                                            ),
+                                          ],
+                                          style: TextStyle(color: Colors.black),
+                                        ),
+                                      ),
+                                      SizedBox(height: 10),
+                                      Container(
+                                        width: double.infinity,
+                                        height: 150,
+                                        color: Colors.grey[300],
+                                        child: Image.network(
+                                          publication.picture,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                            return Center(child: Icon(Icons.error, size: 50, color: Colors.grey));
+                                          },
+                                        ),
                                       ),
                                     ],
-                                    style: TextStyle(color: Colors.black),
                                   ),
                                 ),
-                                SizedBox(height: 10),
-                                RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: 'Dirección: ',
-                                        style: TextStyle(fontWeight: FontWeight.bold),
-                                      ),
-                                      TextSpan(
-                                        text: publication.address,
-                                        style: TextStyle(fontWeight: FontWeight.normal),
-                                      ),
-                                    ],
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ),
-                                SizedBox(height: 10),
-                                RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: 'Técnico: ',
-                                        style: TextStyle(fontWeight: FontWeight.bold),
-                                      ),
-                                      TextSpan(
-                                        text: publication.job.name,
-                                        style: TextStyle(fontWeight: FontWeight.normal),
-                                      ),
-                                    ],
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ),
-                                SizedBox(height: 10),
-                                Container(
-                                  width: double.infinity,
-                                  height: 150,
-                                  color: Colors.grey[300],
-                                  child: Image.network(
-                                    publication.picture,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                      return Center(child: Icon(Icons.error, size: 50, color: Colors.grey));
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
+                              ),
+                            );
+                          },
+                        );
+                      }
                     },
-                  )
-                      : Center(child: Text('No hay publicaciones')),
+                  ),
                   Center(child: Text('No hay comentarios')),
                 ],
               ),
