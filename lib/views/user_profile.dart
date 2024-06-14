@@ -288,7 +288,139 @@ class UserProfileScreen extends StatefulWidget {
                 ],
               ),
             )
-                : Text('Vista solo para técnicos'),
+                : Padding(
+                  padding: const EdgeInsets.only(left: 40.0, right: 40.0, bottom: 0, top: 5.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 140,
+                            padding: EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Color(0xFFF4F4F4), width: 1.0),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.build, // Icono de herramienta
+                                  color: Color(0xFF4D4D4D),
+                                ),
+                                SizedBox(width: 8),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '10', // Número de servicios
+                                      style: TextStyle(
+                                        color: Color(0xFF4D4D4D),
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Servicios',
+                                      style: TextStyle(
+                                        color: Color(0xFF4D4D4D),
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                          Container(
+                            width: 140,
+                            padding: EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Color(0xFFF4F4F4), width: 1.0),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.star, // Icono de estrella
+                                  color: Color(0xFF4D4D4D),
+                                ),
+                                SizedBox(width: 8),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                                  children: [
+                                    Text(
+                                      '4.5', // Calificación
+                                      style: TextStyle(
+                                        color: Color(0xFF4D4D4D),
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Calificación',
+                                      style: TextStyle(
+                                        color: Color(0xFF4D4D4D),
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 16),
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(color:Color(0xFFF4F4F4), width: 1.0),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Text(_tecnico!.description.toString(),
+                          style: TextStyle(
+                            color: Color(0xFF4D4D4D),
+                          )
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          backgroundColor: Color(0xFF1769FF),
+                          elevation: 0,
+                          padding: EdgeInsets.symmetric(horizontal: 90),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              Icons.edit_note,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Editar',
+                              style: TextStyle(
+                                color: Color(0xFFFFFFFF),
+                                fontSize: 16,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ]
+                              ),
+                ),
             SizedBox(height: 20),
             TabBar(
               tabs: [
