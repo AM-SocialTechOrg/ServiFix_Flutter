@@ -1,7 +1,8 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
+import 'package:servifix_flutter/api/dto/login_response.dart';
+import 'package:servifix_flutter/api/dto/user_request.dart';
 import 'package:servifix_flutter/api/service/accountservice.dart';
+import 'package:servifix_flutter/api/service/userService.dart';
 import 'package:servifix_flutter/views/login.dart';
 import 'package:servifix_flutter/views/register2.dart';
 import 'package:servifix_flutter/views/successful_registration.dart';
@@ -14,6 +15,7 @@ TextEditingController dniController = TextEditingController();
 TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
 TextEditingController repeatPasswordController = TextEditingController();
+TextEditingController phoneController = TextEditingController();
 
 class Register1 extends StatefulWidget {
   const Register1({Key? key}) : super(key: key);
@@ -56,6 +58,94 @@ class _Register1State extends State<Register1> {
     passwordController.clear();
     repeatPasswordController.clear();
   }
+
+  Future<void> _registerUser(BuildContext context) async {
+    String originalDateTime = _selectedBirthday.toString();
+    String dateWithoutTime = originalDateTime.substring(0, 10);
+    int _role = (_selectedUser == 'client') ? 1 : 2;
+
+    try {
+      final registerResponse = await AuthService().register(
+        nameController.text,
+        lastNameController.text,
+        _selectedGender,
+        dateWithoutTime,
+        emailController.text,
+        passwordController.text,
+        _role,
+      );
+
+      if (registerResponse != null) {
+        final loginResponse = await _loginUser(emailController.text, passwordController.text);
+
+        if (loginResponse != null && loginResponse.token != null && loginResponse.id != null) {
+          String token = loginResponse.token!;
+          int id = loginResponse.id!;
+          await _createAccount(context, dateWithoutTime, _role, token, id);
+        } else {
+          print('No se pudo recuperar el token después del registro');
+        }
+      }
+    } catch (e) {
+      print('Error de registro: $e');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LogIn()),
+      );
+    }
+  }
+
+  Future<LoginResponse?> _loginUser(String email, String password) async {
+    try {
+      final loginResponse = await AuthService().login(email, password);
+      return loginResponse;
+    } catch (e) {
+      print('Error de inicio de sesión: $e');
+      return null;
+    }
+  }
+
+  Future<void> _createAccount(BuildContext context, String dateWithoutTime, int role, String token, int id) async {
+    try {
+      await _createUser(context, token, id);
+
+    } catch (e) {
+      print('Error al crear la cuenta: $e');
+    }
+  }
+
+  Future<void> _createUser(BuildContext context, String token, int accountId) async {
+    final userRequest = UserRequest(
+      address: 'file.pdf',
+      description: 'No hay una descripción',
+      image: 'https://i.pinimg.com/736x/d2/98/4e/d2984ec4b65a8568eab3dc2b640fc58e.jpg',
+      number: '999999999',
+      accountId: accountId,
+    );
+
+    print(userRequest.toString());
+
+    try {
+      final userResponse = await ClientService().createUser(userRequest, token);
+
+      if (userResponse != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SuccessfulRegistration(
+              name: nameController.text,
+              lastname: lastNameController.text,
+              email: emailController.text,
+              user: _selectedUser,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error al crear usuario: $e');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -167,25 +257,55 @@ class _Register1State extends State<Register1> {
 
                 SizedBox(height: 16),
 
-                TextField(
-                  controller: dniController,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
+            Row(
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: TextField(
+                    controller: dniController,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF1769FF), width: 1.0),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      labelText: 'DNI',
+                      labelStyle: TextStyle(color: Color(0xFFA0A0A0)),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF1769FF), width: 1.0),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    labelText: 'DNI',
-                    labelStyle: TextStyle(color: Color(0xFFA0A0A0)),
+                    onChanged: (value) {
+                      isFormEmpty();
+                    },
                   ),
-                  onChanged: (value) {
-                    isFormEmpty();
-                  },
                 ),
+                SizedBox(width: 16),
+                Flexible(
+                  flex: 1,
+                  child: TextField(
+                    controller: phoneController,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF1769FF), width: 1.0),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      labelText: 'Celular',
+                      labelStyle: TextStyle(color: Color(0xFFA0A0A0)),
+                    ),
+                    onChanged: (value) {
+                      isFormEmpty();
+                    },
+                  ),
+                ),
+              ],
+            ),
 
                 SizedBox(height: 16),
 
@@ -382,100 +502,25 @@ class _Register1State extends State<Register1> {
                 SizedBox(height: 16),
 
                 ElevatedButton(
-                  onPressed:_isFormEmpty
-                      ? null
-                      : () {
+                  onPressed: () {
                     if (_selectedUser == 'technician') {
-                      // Redirigir a la vista para el técnico
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => Register2(
-                            name: nameController.text,
-                            lastname: lastNameController.text,
-                            gender: _selectedGender,
-                            birthday: _selectedBirthday,
-                            dni: dniController.text,
-                            email: emailController.text,
-                            password: passwordController.text,
-                            user: _selectedUser,
-                          ),
-                        ),
+                        MaterialPageRoute(builder: (context) =>
+                            Register2(
+                                name: nameController.text,
+                                lastname: lastNameController.text,
+                                gender: _selectedGender,
+                                birthday: _selectedBirthday,
+                                dni: dniController.text,
+                                email: emailController.text,
+                                password: passwordController.text,
+                                user: _selectedUser,
+                                phone: phoneController.text
+                            )),
                       );
-                    } else if (_selectedUser == 'client') {
-                      String originalDateTime = _selectedBirthday.toString();
-                      String dateWithoutTime = originalDateTime.substring(0, 10);
-                      int _role = 0;
-
-                      if(_selectedUser == 'client') {
-                        _role = 1;
-                      } else {
-                        _role = 2;
-                      }
-
-                      try
-                      {
-                        //registrar usuario
-                        final registerResponse = AuthService().register(
-                            nameController.text,
-                            lastNameController.text,
-                            _selectedGender,
-                            dateWithoutTime,
-                            emailController.text,
-                            passwordController.text,
-                            _role);
-                          print('crear cuenta');
-
-                        if (registerResponse != null) {
-
-                          //crear cuenta
-                          /*print('crear cuenta');
-                          try {
-                            final accountResponse = AccountService().createAccount(
-                                nameController.text,
-                                lastNameController.text,
-                                _selectedGender,
-                                dateWithoutTime,
-                                emailController.text,
-                                passwordController.text,
-                                _role);
-
-                            if (accountResponse != null) {
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => SuccessfulRegistration(
-                                  name: nameController.text,
-                                  lastname: lastNameController.text,
-                                  email: emailController.text,
-                                  user: _selectedUser,
-                                )
-                                ),
-                              );
-                            }
-                          }
-                          catch (e) {
-                            print('Error al crear cuenta: $e');
-                          }*/
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => SuccessfulRegistration(
-                              name: nameController.text,
-                              lastname: lastNameController.text,
-                              email: emailController.text,
-                              user: _selectedUser,
-                            )
-                            ),
-                          );
-                        }
-                      } catch (e) {
-                        print('Error de registro: $e');
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => LogIn()),
-                        );
-                      }
+                    } else {
+                      _registerUser(context);
                     }
                   },
                   child: const Text(

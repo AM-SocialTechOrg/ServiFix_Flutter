@@ -1,65 +1,85 @@
 import 'package:flutter/material.dart';
+import 'package:servifix_flutter/api/dto/get_technical_response_by_account.dart';
+import 'package:servifix_flutter/api/dto/get_user_response_by_account.dart';
 import 'package:servifix_flutter/api/model/publication.dart';
-import 'package:servifix_flutter/api/service/clienteService.dart';
+import 'package:servifix_flutter/api/service/userService.dart';
 import 'package:provider/provider.dart';
 import 'package:servifix_flutter/api/provider/AuthModel.dart';
-import '../api/dto/cliente_response.dart';
+import 'package:servifix_flutter/api/service/technicalService.dart';
 import 'package:servifix_flutter/api/service/PublicationService.dart';
 
 class UserProfileScreen extends StatefulWidget {
+
+  final String token;
+  final int id;
+
+  const UserProfileScreen({
+    Key? key,
+    required this.token,
+    required this.id
+  }): super(key: key);
 
   @override
   _UserProfileScreenState createState() => _UserProfileScreenState();
 }
 
-class _UserProfileScreenState extends State<UserProfileScreen> {
-  ClienteResponse? _cliente;
-  // lista de publicaciones
+  class _UserProfileScreenState extends State<UserProfileScreen> {
+  GetUserResponseByAccount? _cliente;
+  GetTechnicalResponseByAccount? _tecnico;
   List<Publicaticion>? _publicaciones;
 
-  final ClienteService clienteService = ClienteService();
+  final ClientService clienteService = ClientService();
+  final TechnicalService technicalService = TechnicalService();
   final PublicationService publicationService = PublicationService();
+
   @override
   void initState() {
     super.initState();
     print("initState for ProfileScreen");
-    _fetchCliente();
-    _fetchPublicaciones();
+    print('ID: ' + widget.id.toString());
+    print('TOKEN: ' + widget.token.toString());
+    _fetchPersona();
   }
 
-  Future<void> _fetchCliente() async {
+  Future<void> _fetchPersona() async {
     try {
-      String token = Provider.of<Authmodel>(context, listen: false).getToken;
-      String id = Provider.of<Authmodel>(context, listen: false).getId;
-      ClienteResponse cliente = await clienteService.getCliente(id,token);
+      GetUserResponseByAccount cliente = await clienteService.getUserByAccountId(widget.id, widget.token);
       setState(() {
         _cliente = cliente;
-        print('Cliente: prueba con id');
+        _tecnico = null;
       });
+      _fetchPublicaciones(_cliente!.id.toString());
     } catch (e) {
-      print('Error: No devuelve el cliente' + e.toString());
+      print('Error al obtener el cliente: $e');
+      try {
+        GetTechnicalResponseByAccount tecnico = await technicalService.getTechnicianByAccountId(widget.id, widget.token);
+        print('Tecnico: ' + tecnico.toString());
+        setState(() {
+          _tecnico = tecnico;
+          _cliente = null;
+        });
+      } catch (e) {
+        print('Error al obtener el técnico: $e');
+      }
     }
   }
 
-  Future<void> _fetchPublicaciones() async {
+
+  Future<void> _fetchPublicaciones(String idcliente) async {
     try {
-      String token = Provider.of<Authmodel>(context, listen: false).getToken;
-      String id = Provider.of<Authmodel>(context, listen: false).getId;
-      _publicaciones = await publicationService.getPublications(id,token);
+      _publicaciones = await publicationService.getPublications(idcliente, widget.token);
       setState(() {
         print('Publicaciones: prueba con id');
-        // ver los elementos publicaciones lista
         _publicaciones!.forEach((element) {
-          print("titulo de la publicacion: "+element.toString());
+          print("titulo de la publicacion: " + element.toString());
         });
       });
     } catch (e) {
-      print('Error: No devuelve las publicaciones' + e.toString());
+      print('Error: No devuelve las publicaciones ' + e.toString());
     }
   }
 
   void _showServiceRequestForm(BuildContext context) {
-
     String token = Provider.of<Authmodel>(context, listen: false).getToken;
 
     showModalBottomSheet(
@@ -67,8 +87,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       isScrollControlled: true,
       builder: (BuildContext context) {
         return Padding(
-          padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom),
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: Container(
             padding: EdgeInsets.all(20),
             child: Column(
@@ -89,43 +108,32 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     DropdownMenuItem(child: Text('Carpintero'), value: 'Carpintero'),
                   ],
                   onChanged: (value) {},
+                  style: TextStyle(color: Color(0xFF4D4D4D), fontSize: 14),
                   decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF1769FF), width: 1.0),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    labelStyle: TextStyle(color: Color(0xFFA0A0A0)),
                     labelText: '¿Qué profesional necesitas?',
-                    border: OutlineInputBorder(),
                   ),
                 ),
                 SizedBox(height: 20),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Título',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                _buildTextFormField('Título'),
                 SizedBox(height: 20),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Descripción',
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 3,
-                ),
+                _buildTextFormField('Descripción', maxLines: 3),
                 SizedBox(height: 20),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Dirección',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                _buildTextFormField('Dirección'),
                 SizedBox(height: 20),
                 Row(
                   children: [
                     Expanded(
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Subir archivo',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
+                      child: _buildTextFormField('Subir archivo'),
                     ),
                     SizedBox(width: 10),
                     ElevatedButton.icon(
@@ -144,12 +152,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     ),
                     backgroundColor: Color(0xFF1769FF),
                     elevation: 0,
-                    padding: EdgeInsets.symmetric(horizontal: 90), // Define el margen horizontal deseado
+                    padding: EdgeInsets.symmetric(horizontal: 90),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      SizedBox(width: 8), // Espacio entre el icono y el texto
+                      SizedBox(width: 8),
                       Text(
                         'Publicar solicitud',
                         style: TextStyle(
@@ -160,7 +168,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     ],
                   ),
                 ),
-
               ],
             ),
           ),
@@ -189,6 +196,25 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
+  Widget _buildTextFormField(String labelText, {int maxLines = 1}) {
+    return TextFormField(
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF1769FF), width: 1.0),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        labelStyle: TextStyle(color: Color(0xFFA0A0A0)),
+        labelText: labelText,
+      ),
+      maxLines: maxLines,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -212,27 +238,29 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             CircleAvatar(
               radius: 50,
               backgroundColor: Colors.grey[300],
-              backgroundImage: _cliente != null && _cliente!.data != null && _cliente!.data.image != null
-                  ? NetworkImage(_cliente!.data.image)
+              backgroundImage: _cliente != null && _cliente!.image != null
+                  ? NetworkImage(_cliente!.image)
                   : null,
             ),
             SizedBox(height: 10),
-
             Text(
-              _cliente != null && _cliente!.data != null && _cliente!.data!.account != null
-                  ? _cliente!.data!.account!.firstName
+              _cliente != null && _cliente!.account!= null
+                  ? _cliente!.account.firstName + ' ' + _cliente!.account.lastName
+                  : _tecnico != null && _tecnico!.account!= null
+                  ? _tecnico!.account.firstName + ' ' + _tecnico!.account.lastName
                   : 'Cargando...',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              _cliente != null && _cliente!.data != null && _cliente!.data!.account != null
-                  ? _cliente!.data!.account!.role!.id == 1 ? 'Cliente' : 'Técnico'
+              _cliente != null && _cliente!.account!= null
+                  ? 'Cliente'
+                  : _tecnico != null && _tecnico!.account!= null
+                  ? 'Técnico'
                   : 'Cargando...',
-
             ),
             SizedBox(height: 20),
-
-            ElevatedButton(
+            _cliente != null && _cliente!.account!= null
+                ? ElevatedButton(
               onPressed: () => _showServiceRequestForm(context),
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
@@ -240,16 +268,16 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
                 backgroundColor: Color(0xFF1769FF),
                 elevation: 0,
-                padding: EdgeInsets.symmetric(horizontal: 90), // Define el margen horizontal deseado
+                padding: EdgeInsets.symmetric(horizontal: 90),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Icon(
-                    Icons.edit_document, // Icono de añadir
-                    color: Colors.white, // Color del icono
+                    Icons.edit_document,
+                    color: Colors.white,
                   ),
-                  SizedBox(width: 8), // Espacio entre el icono y el texto
+                  SizedBox(width: 8),
                   Text(
                     'Solicitar servicio',
                     style: TextStyle(
@@ -259,7 +287,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   ),
                 ],
               ),
-            ),
+            )
+                : Text('Vista solo para técnicos'),
             SizedBox(height: 20),
             TabBar(
               tabs: [
@@ -320,7 +349,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         style: TextStyle(fontWeight: FontWeight.normal),
                                       ),
                                     ],
-                                    style: TextStyle(color: Colors.black), // Color para todo el texto
+                                    style: TextStyle(color: Colors.black),
                                   ),
                                 ),
                                 SizedBox(height: 10),
@@ -336,7 +365,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         style: TextStyle(fontWeight: FontWeight.normal),
                                       ),
                                     ],
-                                    style: TextStyle(color: Colors.black), // Color para todo el texto
+                                    style: TextStyle(color: Colors.black),
                                   ),
                                 ),
                                 SizedBox(height: 10),
@@ -348,7 +377,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                     publication.picture,
                                     fit: BoxFit.cover,
                                     errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                      // Si hay un error al cargar la imagen, muestra un icono de error
                                       return Center(child: Icon(Icons.error, size: 50, color: Colors.grey));
                                     },
                                   ),

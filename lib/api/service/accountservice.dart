@@ -6,7 +6,16 @@ import '../dto/account_response.dart';
 class AccountService {
   static const String apiBase = "https://servifix-api-docker.onrender.com/api/v1/";
 
-  Future<AccountResponse> createAccount(String firstName, String lastName, String gender, String birthday, String email, String password, int role) async {
+  Future<AccountResponse> createAccount(
+      String firstName,
+      String lastName,
+      String gender,
+      String birthday,
+      String email,
+      String password,
+      int role,
+      String token
+      ) async {
     final requestBody = AccountRequest(
       firstName: firstName,
       lastName: lastName,
@@ -24,6 +33,7 @@ class AccountService {
       Uri.parse(apiBase + "servifix/accounts"),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
       },
       body: bodyJson,
     );
@@ -32,7 +42,6 @@ class AccountService {
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       print(response.body);
-
 
       final res = json.decode(response.body);
       final accountResponse = AccountResponse.fromJson(res);

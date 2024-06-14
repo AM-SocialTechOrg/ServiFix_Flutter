@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:servifix_flutter/api/dto/cliente_response.dart';
+import 'package:servifix_flutter/api/dto/login_response.dart';
+import 'package:servifix_flutter/api/dto/technical_request.dart';
+import 'package:servifix_flutter/api/dto/user_request.dart';
+import 'package:servifix_flutter/api/service/userService.dart';
+import 'package:servifix_flutter/api/service/technicalService.dart';
 import 'package:servifix_flutter/views/login.dart';
+import 'package:servifix_flutter/views/register1.dart';
 import 'package:servifix_flutter/views/successful_registration.dart';
 
 import '../api/service/accountservice.dart';
@@ -17,6 +24,7 @@ class Register3 extends StatefulWidget {
   final String email;
   final String password;
   final String user;
+  final String phone;
 
   const Register3({
     Key? key,
@@ -28,6 +36,7 @@ class Register3 extends StatefulWidget {
     required this.email,
     required this.password,
     required this.user,
+    required this.phone,
   }) : super(key: key);
 
   @override
@@ -61,6 +70,99 @@ class _Register3State extends State<Register3> {
   clearFields() {
     timeController.clear();
     experienceController.clear();
+  }
+
+  Future<void> _registerUser(BuildContext context) async {
+    String originalDateTime = widget.birthday.toString();
+    String dateWithoutTime = originalDateTime.substring(0, 10);
+    int _role = (widget.user == 'client') ? 1 : 2;
+
+    try {
+      final registerResponse = await AuthService().register(
+        widget.name,
+        widget.lastname,
+        widget.gender,
+        dateWithoutTime,
+        widget.email,
+        widget.password,
+        _role,
+      );
+
+      if (registerResponse != null) {
+        final loginResponse = await _loginUser(widget.email, widget.password);
+
+        if (loginResponse != null && loginResponse.token != null && loginResponse.id != null) {
+          String token = loginResponse.token!;
+          int id = loginResponse.id!;
+          await _createAccount(context, dateWithoutTime, _role, token, id);
+        } else {
+          print('No se pudo recuperar el token después del registro');
+        }
+      }
+    } catch (e) {
+      print('Error de registro: $e');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LogIn()),
+      );
+    }
+  }
+
+  Future<LoginResponse?> _loginUser(String email, String password) async {
+    try {
+      final loginResponse = await AuthService().login(email, password);
+      return loginResponse;
+    } catch (e) {
+      print('Error de inicio de sesión: $e');
+      return null;
+    }
+  }
+
+  Future<void> _createTechnical(BuildContext context, String token, int accountId) async {
+
+    print('crear técnico');
+    String job =  (_selectedJob == 'technician') ? 'Técnico' : (_selectedJob == 'plumber') ? 'Gasfitero' : (_selectedJob == 'electrician') ? 'Electricista' : (_selectedJob == 'locksmith') ? 'Cerrajero' : 'Pintor';
+    String time = (_selectedTime == 'years') ? 'años' : 'meses';
+
+    final technicalRequest = TechnicalRequest(
+      policeRecords: widget.name + '_' + widget.lastname + '_records.pdf',
+      skills: experienceController.value.text,
+      experience: job + ' por ' + timeController.value.text + ' ' + time,
+      number: widget.phone,
+      description: 'No hay una descripción',
+      accountId: accountId,
+    );
+
+    print('Request: ' + technicalRequest.toString());
+
+    try {
+      final technicalResponse = await TechnicalService().createTechnical(technicalRequest, token);
+
+      if (technicalResponse != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SuccessfulRegistration(
+              name: widget.name,
+              lastname: widget.lastname,
+              email: widget.email,
+              user: widget.user,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error al crear técnico: $e');
+    }
+  }
+
+  Future<void> _createAccount(BuildContext context, String dateWithoutTime, int role, String token, int id) async {
+    try {
+      await _createTechnical(context, token, id);
+
+    } catch (e) {
+      print('Error al crear la cuenta: $e');
+    }
   }
 
   @override
@@ -291,78 +393,7 @@ class _Register3State extends State<Register3> {
               SizedBox(height: 24),
 
               ElevatedButton(
-                onPressed: () {
-                  String originalDateTime = widget.birthday.toString();
-                  String dateWithoutTime = originalDateTime.substring(0, 10);
-                  int _role = 0;
-
-                  if(widget.user == 'client') {
-                    _role = 1;
-                  } else {
-                    _role = 2;
-                  }
-
-                  try
-                 {
-                    final registerResponse = AuthService().register(
-                      widget.name,
-                      widget.lastname,
-                      widget.gender,
-                      dateWithoutTime,
-                      widget.email,
-                      widget.password,
-                        _role);
-                    if (registerResponse != null) {
-                      //crear cuenta
-                     /* print('crear cuenta');
-                      try {
-                        final accountResponse = AccountService().createAccount(
-                            widget.name,
-                            widget.lastname,
-                            widget.gender,
-                            dateWithoutTime,
-                            widget.email,
-                            widget.password,
-                            _role);
-
-                        if (accountResponse != null) {
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => SuccessfulRegistration(
-                              name:  widget.name,
-                              lastname: widget.lastname,
-                              email: emailController.text,
-                              user: widget.user,
-                            )
-                            ),
-                          );
-                        }
-                      }
-                      catch (e) {
-                        print('Error al crear cuenta: $e');
-                      }*/
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SuccessfulRegistration(
-                          name:  widget.name,
-                          lastname: widget.lastname,
-                          email: emailController.text,
-                          user: widget.user,
-                        )
-                        ),
-                      );
-                    }
-                  } catch (e) {
-                    print('Error de registro: $e');
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => LogIn()),
-                    );
-                  }
-
-                },
+                onPressed: _isformEmpty ? null : () => _registerUser(context),
                 child: const Text(
                   'Continuar',
                   style: TextStyle(
