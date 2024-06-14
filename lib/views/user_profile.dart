@@ -53,7 +53,7 @@ class UserProfileScreen extends StatefulWidget {
     super.initState();
     _loadUserPreferences();
   }
-
+/*
   Future<void> _fetchPublicaciones(String idcliente) async {
     try {
       _publicaciones = await publicationService.getPublications(idcliente, widget.token);
@@ -67,7 +67,7 @@ class UserProfileScreen extends StatefulWidget {
       print('Error: No devuelve las publicaciones ' + e.toString());
     }
   }
-
+*/
   void _showServiceRequestForm(BuildContext context) {
 
     showModalBottomSheet(
