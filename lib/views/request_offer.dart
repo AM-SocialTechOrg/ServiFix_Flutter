@@ -7,6 +7,7 @@ import 'package:servifix_flutter/views/notification.dart';
 import 'package:servifix_flutter/views/offer.dart';
 import 'package:servifix_flutter/api/service/PublicationService.dart';
 import 'package:servifix_flutter/api/dto/publication_response.dart';
+import 'package:servifix_flutter/api/dto/publication_request.dart';
 
 class RequestOffer extends StatefulWidget {
   const RequestOffer({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ class _OfferState extends State<RequestOffer> {
   late String token;
   late int userId;
   late GetUserResponseByAccount cliente;
-  Future<List<PublicationResponse>>? _publicationsFuture; // nullable future
+  Future<List<PublicationResponse>>? _publicationsFuture;
 
   @override
   void initState() {
@@ -43,11 +44,135 @@ class _OfferState extends State<RequestOffer> {
     });
   }
 
+  Future<void> _editPublication(String publicationId, PublicationRequest publicationRequest) async {
+    try {
+      await PublicationService().editPublication(publicationId, token, publicationRequest.toJson());
+      setState(() {
+        _publicationsFuture =
+            PublicationService().getPublications(cliente.id.toString(), token);
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error editing publication: $e')),
+      );
+    }
+  }
+
+  Future<void> _deletePublication(String publicationId) async {
+    try {
+      await PublicationService().deletePublication(publicationId, token);
+      setState(() {
+        _publicationsFuture =
+            PublicationService().getPublications(cliente.id.toString(), token);
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting publication: $e')),
+      );
+    }
+  }
+
+  void _showEditDialog(BuildContext context, PublicationResponse publication) {
+    final titleController = TextEditingController(text: publication.title);
+    final descriptionController = TextEditingController(text: publication.description);
+    final amountController = TextEditingController(text: publication.amount.toString());
+    final pictureController = TextEditingController(text: publication.picture);
+    final addressController = TextEditingController(text: publication.address);
+    final userController = TextEditingController(text: publication.user.id.toString());
+    final jobController = TextEditingController(text: publication.job.id.toString());
+    final jobNameController = TextEditingController(text: publication.job.name);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Editar Publicación'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextField(
+                  controller: titleController,
+                  decoration: InputDecoration(labelText: 'Título'),
+                ),
+                TextField(
+                  controller: descriptionController,
+                  decoration: InputDecoration(labelText: 'Descripción'),
+                ),
+                TextField(
+                  controller: pictureController,
+                  decoration: InputDecoration(labelText: 'Imagen'),
+                ),
+                TextField(
+                  controller: addressController,
+                  decoration: InputDecoration(labelText: 'Dirección'),
+                ),
+
+                // espacios
+                SizedBox(height: 10),
+
+                DropdownButtonFormField(
+                  value: jobController.text,
+                  items: [
+                    DropdownMenuItem(child: Text('Técnico'), value: '1'),
+                    DropdownMenuItem(child: Text('Gasfitero'), value: '2'),
+                    DropdownMenuItem(child: Text('Electricista'), value: '3'),
+                    DropdownMenuItem(child: Text('Cerrajero'), value: '4'),
+                    DropdownMenuItem(child: Text('Pintor'), value: '5'),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      jobController.text = value.toString();
+                    });
+                  },
+                  style: TextStyle(color: Color(0xFF4D4D4D), fontSize: 14),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF1769FF), width: 1.0),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    labelStyle: TextStyle(color: Color(0xFFA0A0A0)),
+                    labelText: 'Trabajo', // jobNameController.text,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final editedPublication = PublicationRequest(
+                  title: titleController.text,
+                  description: descriptionController.text,
+                  amount: double.parse(amountController.text),
+                  picture: pictureController.text,
+                  address: addressController.text,
+                  user: int.parse(userController.text),
+                  job: int.parse(jobController.text),
+                );
+                _editPublication(publication.id.toString(), editedPublication);
+                Navigator.of(context).pop();
+              },
+              child: Text('Aceptar Cambios'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildRequestCard(BuildContext context,
-      {required String title,
-        required String address,
-        required String technician,
-        required String description}) {
+      {required PublicationResponse publication}) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -60,20 +185,20 @@ class _OfferState extends State<RequestOffer> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    title,
+                    publication.title,
                     style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
                   Text(
-                    'Dirección: $address',
+                    'Dirección: ${publication.address}',
                     style: TextStyle(fontSize: 13),
                   ),
                   Text(
-                    'Técnico: $technician',
+                    'Técnico: ${publication.job.name}',
                     style: TextStyle(fontSize: 13),
                   ),
                   Text(
-                    'Descripción: $description',
+                    'Descripción: ${publication.description}',
                     style: TextStyle(fontSize: 13),
                   ),
                   SizedBox(height: 10),
@@ -118,7 +243,9 @@ class _OfferState extends State<RequestOffer> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _showEditDialog(context, publication);
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue[800],
                       shape: RoundedRectangleBorder(
@@ -145,7 +272,9 @@ class _OfferState extends State<RequestOffer> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _deletePublication(publication.id.toString());
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red[800],
                       shape: RoundedRectangleBorder(
@@ -186,7 +315,7 @@ class _OfferState extends State<RequestOffer> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         actions: [
-         Container(
+          Container(
             margin: EdgeInsets.only(right: 16.0, left: 5.0),
             child: IconButton(
               icon: Icon(Icons.filter_list),
@@ -237,10 +366,7 @@ class _OfferState extends State<RequestOffer> {
                   final publication = publications[index];
                   return _buildRequestCard(
                     context,
-                    title: publication.title,
-                    address: publication.address,
-                    technician: publication.job.name,
-                    description: publication.description,
+                    publication: publication,
                   );
                 },
               );
