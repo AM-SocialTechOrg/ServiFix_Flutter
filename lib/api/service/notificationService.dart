@@ -25,11 +25,10 @@ class Notificationservice {
       final res = json.decode(utf8.decode(response.bodyBytes));
       print( "respuesta json:" + res.toString());
       final notificationList = res['data'] as List;
-      final notificationResponse = notificationList.map((e) => NotificationResponse.fromJson(e as Map<String, dynamic>)).toList();
-      print("notificaciones1: " + notificationResponse.toString());
+      final notificationResponse = notificationList.map((e) => NotificationResponse.fromJson(e)).toList();
+      print("notificaciones: " + notificationResponse.toString());
       return notificationResponse;
     } else {
-      print("Error en la solicitud de notificaciones");
       throw Exception('Failed to load backend: ${response.statusCode}');
     }
   }
