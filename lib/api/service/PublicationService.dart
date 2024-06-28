@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:servifix_flutter/api/dto/publication_request.dart';
 import 'dart:convert';
 //import '../model/publication.dart';
 import 'package:servifix_flutter/api/dto/publication_response.dart';
@@ -60,6 +61,56 @@ Parameters
       }
     } else {
       throw Exception('Failed to load backend: ${response.statusCode}');
+    }
+  }
+
+  Future<PublicationResponse> getPublicationById(String id,String TokenModel) async {
+    String token = TokenModel;
+
+    final response = await http.get(
+      Uri.parse(apiBase + "servifix/publications/$id"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token', // Incluye el token de autenticación en el encabezado
+      },
+    );
+    if (response.statusCode == 200) {
+      final res = json.decode(utf8.decode(response.bodyBytes));
+      print( "respuesta json:" + res.toString());
+
+      if (res['data'] != null) {
+        return PublicationResponse.fromJson(res['data']);
+      } else {
+        throw Exception('The response does not contain a "data" field');
+      }
+    } else {
+      throw Exception('Failed to load backend: ${response.statusCode}');
+    }
+  }
+
+  Future<PublicationResponse> createPublication(String token, PublicationRequest publication) async{
+    final bodyJson =  json.encode(publication.toJson());
+    print(token);
+    print(bodyJson);
+
+    final response = await http.post(
+      Uri.parse(apiBase + "servifix/publications"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: bodyJson,
+    );
+
+    print(response.statusCode);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print(response.statusCode);
+      final res = json.decode(response.body);
+      final publicationResponse = PublicationResponse.fromJson(res);
+      return publicationResponse;
+    } else {
+      throw Exception('Failed to create Publication: ${response.statusCode}');
     }
   }
 }

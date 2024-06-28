@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:servifix_flutter/api/dto/get_user_response_by_account.dart';
+import 'package:servifix_flutter/api/dto/publication_request.dart';
 import 'package:servifix_flutter/api/dto/publication_response.dart';
 import 'package:servifix_flutter/api/model/publication.dart';
 import 'package:servifix_flutter/api/service/userService.dart';
@@ -30,6 +31,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   late int _userId;
   late GetUserResponseByAccount _cliente;
   Future<List<PublicationResponse>>? _publicationsFuture;
+  String? _selectedProfession;
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController fileController = TextEditingController();
+
 
   final PublicationService publicationService = PublicationService();
   final ClientService clienteService = ClientService();
@@ -55,20 +62,31 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       _publicationsFuture = publicationService.getPublications(cliente.id.toString(), _token);
     });
   }
-
   void _showServiceRequestForm(BuildContext context) {
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Container(
-            padding: EdgeInsets.all(20),
+        return SingleChildScrollView(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            top: 20,
+            left: 30,
+            right: 30,
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                Center(
+                  child: Container(
+                    height: 4,
+                    width: 40,
+                    color: Colors.grey[300],
+                    margin: EdgeInsets.only(bottom: 16),
+                  ),
+                ),
                 Text(
                   'Solicitar Servicio',
                   style: TextStyle(
@@ -78,12 +96,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
                 SizedBox(height: 20),
                 DropdownButtonFormField(
+                  value: _selectedProfession,
                   items: [
-                    DropdownMenuItem(child: Text('Gasfitero'), value: 'Gasfitero'),
-                    DropdownMenuItem(child: Text('Electricista'), value: 'Electricista'),
-                    DropdownMenuItem(child: Text('Carpintero'), value: 'Carpintero'),
+                    DropdownMenuItem(child: Text('Técnico'), value: '1'),
+                    DropdownMenuItem(child: Text('Gasfitero'), value: '2'),
+                    DropdownMenuItem(child: Text('Electricista'), value: '3'),
+                    DropdownMenuItem(child: Text('Cerrajero'), value: '4'),
+                    DropdownMenuItem(child: Text('Pintor'), value: '5'),
                   ],
-                  onChanged: (value) {},
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedProfession = value.toString();
+                    });
+                  },
                   style: TextStyle(color: Color(0xFF4D4D4D), fontSize: 14),
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -100,16 +125,16 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   ),
                 ),
                 SizedBox(height: 20),
-                _buildTextFormField('Título'),
+                _buildTextFormField('Título', controller: titleController),
                 SizedBox(height: 20),
-                _buildTextFormField('Descripción', maxLines: 3),
+                _buildTextFormField('Descripción', maxLines: 3, controller: descriptionController),
                 SizedBox(height: 20),
-                _buildTextFormField('Dirección'),
+                _buildTextFormField('Dirección', controller: addressController),
                 SizedBox(height: 20),
                 Row(
                   children: [
                     Expanded(
-                      child: _buildTextFormField('Subir archivo'),
+                      child: _buildTextFormField('Subir archivo', controller: fileController),
                     ),
                     SizedBox(width: 10),
                     ElevatedButton.icon(
@@ -121,7 +146,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () => _showSuccessDialog(context),
+                  onPressed: (){
+                    _submitServiceRequest(context);
+                    _showSuccessDialog(context);
+                  },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
@@ -144,6 +172,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     ],
                   ),
                 ),
+                SizedBox(height: 30),
               ],
             ),
           ),
@@ -157,14 +186,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Solicitud Publicada'),
-          content: Text('Tu solicitud de servicio ha sido publicada exitosamente.'),
+          title: Text('Solicitud enviada'),
+          content: Text('Tu solicitud ha sido enviada exitosamente.'),
           actions: <Widget>[
             TextButton(
+              child: Text('Aceptar'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
             ),
           ],
         );
@@ -172,8 +201,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  Widget _buildTextFormField(String labelText, {int maxLines = 1}) {
+  Widget _buildTextFormField(String labelText, {int maxLines = 1, TextEditingController? controller}) {
     return TextFormField(
+      controller: controller,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         enabledBorder: OutlineInputBorder(
@@ -188,7 +218,30 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         labelText: labelText,
       ),
       maxLines: maxLines,
+      onChanged: (value) {
+        setState(() {
+          controller!.text = value;
+        });
+      },
     );
+  }
+
+  void _submitServiceRequest(BuildContext context) async{
+    String title = titleController.text;
+    String description = descriptionController.text;
+    String address = addressController.text;
+    String file = fileController.text;
+    int job = _selectedProfession != null ? int.parse(_selectedProfession!) : 0;
+
+    final request = PublicationRequest(title: title, description: description, amount: 1, picture: file, address: address, user: _cliente.id, job: job);
+    print(request);
+
+    try{
+      final publicationRes =  await PublicationService().createPublication(widget.token, request);
+    }
+    catch(e){
+      print(e);
+    }
   }
 
 

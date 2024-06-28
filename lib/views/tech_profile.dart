@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:servifix_flutter/api/dto/get_technical_response_by_account.dart';
 import 'package:servifix_flutter/api/model/publication.dart';
+import 'package:servifix_flutter/api/preferences/userPreferences.dart';
 import 'package:servifix_flutter/api/service/technicalService.dart';
 import 'package:servifix_flutter/api/service/PublicationService.dart';
+import 'package:servifix_flutter/views/tech_search_view.dart';
 
 class TechnicalProfileScreen extends StatefulWidget {
   final String token;
@@ -21,8 +23,10 @@ class TechnicalProfileScreen extends StatefulWidget {
       _TechnicalProfileScreenState();
 }
 
-class _TechnicalProfileScreenState
-    extends State<TechnicalProfileScreen> {
+class _TechnicalProfileScreenState extends State<TechnicalProfileScreen> {
+  late String _token;
+  late int _id;
+  late GetTechnicalResponseByAccount _technical;
 
   List<Publicaticion>? _publicaciones;
   final PublicationService publicationService = PublicationService();
@@ -30,6 +34,9 @@ class _TechnicalProfileScreenState
   @override
   void initState() {
     super.initState();
+    _token = (widget.token) ?? '';
+    _id = (widget.id) ?? 0;
+    _technical = (widget.technical);
   }
 
   @override
@@ -338,6 +345,20 @@ class _TechnicalProfileScreenState
               ),
             ],
             currentIndex: 2,
+            onTap: (index) {
+              if (index == 0) {
+                Navigator.of(context).pushNamed('/');
+              } else if (index == 1) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => TechSearchView(token: _token, technical: _technical),),
+                );
+              } else if (index == 2) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TechnicalProfileScreen(token: _token, id: _id, technical: _technical)),
+                );
+              }
+            },
           ),
         )
     );
