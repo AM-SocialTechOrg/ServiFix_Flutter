@@ -1,64 +1,177 @@
 import 'package:flutter/material.dart';
-import 'package:servifix_flutter/api/dto/get_technical_response_by_account.dart';
 import 'package:servifix_flutter/api/dto/offer_request.dart';
-import 'package:servifix_flutter/api/preferences/userPreferences.dart';
-import 'package:servifix_flutter/api/service/PublicationService.dart';
 import 'package:servifix_flutter/api/dto/publication_response.dart';
 import 'package:servifix_flutter/api/service/offerService.dart';
-import 'package:servifix_flutter/views/publication_view.dart';
-import 'package:servifix_flutter/views/tech_profile.dart';
 
-class TechSearchView extends StatefulWidget {
+class PublicationView extends StatefulWidget {
   final String token;
-  final GetTechnicalResponseByAccount technical;
+  final int technicalId;
+  final PublicationResponse publication;
 
-  const TechSearchView({
+  const PublicationView({
     Key? key,
     required this.token,
-    required this.technical,
+    required this.technicalId,
+    required this.publication,
   }) : super(key: key);
 
   @override
-  State<TechSearchView> createState() => _TechSearchViewState();
+  _PublicationViewState createState() => _PublicationViewState();
 }
 
-class _TechSearchViewState extends State<TechSearchView> {
-  late String _token;
-  Future<List<PublicationResponse>>? _publicationsFuture;
-  DateTime _selectedDate = DateTime.now();
-  TimeOfDay _selectedTime = TimeOfDay.now();
-  TextEditingController _tarifaController = TextEditingController();
-  TextEditingController _descripcionController = TextEditingController();
+class _PublicationViewState extends State<PublicationView> {
+  late DateTime _selectedDate = DateTime.now();
+  late TimeOfDay _selectedTime = TimeOfDay.now();
+  final TextEditingController _tarifaController = TextEditingController();
+  final TextEditingController _descripcionController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    _token = widget.token;
-    _loadUserPreferences();
+  void dispose() {
+    _tarifaController.dispose();
+    _descripcionController.dispose();
+    super.dispose();
   }
 
-  Future<void> _loadUserPreferences() async {
-    setState(() {
-      _publicationsFuture = PublicationService().getAllPublications(_token);
-    });
-  }
-
-  Widget _buildPublicationDetail({required String title, required String content}) {
-    return RichText(
-      text: TextSpan(
-        text: '$title: ',
-        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-        children: <TextSpan>[
-          TextSpan(
-            text: content,
-            style: TextStyle(fontWeight: FontWeight.normal),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: Text('Ofertas'),
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16.0),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.publication.title,
+                style: TextStyle(fontSize: 20),
+              ),
+              SizedBox(height: 18),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundImage: NetworkImage(widget.publication.user.image),
+                    ),
+                    SizedBox(width: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.publication.user.account.firstName +
+                              ' ' +
+                              widget.publication.user.account.lastName,
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          'Cliente',
+                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              SizedBox(height: 20),
+              // Publication card
+              Container(
+                width: double.infinity,
+                child: Card(
+                  elevation: 0,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Descripción',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          widget.publication.description,
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          'Dirección',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          widget.publication.address,
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          'Técnico',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          widget.publication.job.name,
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Text('Imágenes adjuntas', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              SizedBox(height: 8),
+              // Image of the publication
+              Image.network(
+                widget.publication.picture.isNotEmpty
+                    ? widget.publication.picture
+                    : 'https://example.com/placeholder-image.png', // URL de una imagen de placeholder o texto alternativo
+                width: MediaQuery.of(context).size.width,
+                height: 200,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Text('No hay imágenes adjuntas'),
+                  );
+                },
+              ),
+              SizedBox(height: 30),
+              // Hacer oferta button
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _showOfferServiceSheet(context, widget.publication.id);
+                },
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  backgroundColor: Color(0xFF1769FF),
+                  elevation: 0,
+                ),
+                child: Text('Hacer oferta',
+                  style: TextStyle(
+                    color: Color(0xFFFFFFFF),
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  //Agregar una oferta
   void _showOfferServiceSheet(BuildContext context, int publicationId) {
     showModalBottomSheet(
       context: context,
@@ -234,7 +347,8 @@ class _TechSearchViewState extends State<TechSearchView> {
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  createOffer(publicationId);
+                  createOffer(widget.publication.id);
+                  _showSuccessDialog(context);
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -254,195 +368,54 @@ class _TechSearchViewState extends State<TechSearchView> {
     );
   }
 
+  void _showSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Oferta enviada'),
+          content: Text('Tu oferta ha sido enviada exitosamente.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Aceptar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> createOffer(int id) async{
     String formattedDate = "${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}";
     String formattedTime = "${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}";
     final _availability = "$formattedDate $formattedTime";
 
-     final offer = OfferRequest(
+    final offer = OfferRequest(
       availability: _availability,
       amount: double.parse(_tarifaController.text),
       description: _descripcionController.text,
-      technical: widget.technical.technicalId,
+      technical: widget.technicalId,
       publication: id,
       stateOffer: 1,
-     );
+    );
 
-     print('Oferta a crear' + offer.toString());
-     print('id del técnico: ' + widget.technical.technicalId.toString());
-     print('id de la publicación: ' + id.toString());
+    print('Oferta a crear' + offer.toString());
+    print('id del técnico: ' + widget.technicalId.toString());
+    print('id de la publicación: ' + id.toString());
 
-     try {
-       final offerRes = await OfferService().createOffer(_token, offer);
+    try {
+      final offerRes = await OfferService().createOffer(widget.token, offer);
 
-       if(offerRes != null){
-         print('Oferta creada');
-         print(offerRes);
-       }
-     }
-      catch(e){
-        print('Error al crear oferta');
+      if(offerRes != null){
+        print('Oferta creada');
+        print(offerRes);
       }
-  }
-
-  Widget _buildPublicationCard(BuildContext context,
-      {required String title,
-        required String address,
-        required String technician,
-        required String description,
-        required PublicationResponse publication,
-      }) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 5),
-                    _buildPublicationDetail(title: 'Dirección', content: address),
-                    _buildPublicationDetail(title: 'Técnico', content: technician),
-                    RichText(
-                      text: TextSpan(
-                        text: 'Descripción: ',
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: description.length > 50 ? description.substring(0, 40) + '...' : description,
-                            style: TextStyle(fontWeight: FontWeight.normal),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                  ],
-                ),
-              ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => PublicationView(token: _token, technicalId: widget.technical.technicalId, publication: publication)
-                    ));
-                  },
-                  child: Text('Ver detalles'),
-                ),
-                SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    _showOfferServiceSheet(context, publication.id);
-                  },
-                  child: Text('Hacer oferta'),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.sort),
-          onPressed: () {},
-        ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Búsqueda',
-              style: TextStyle(fontSize: 20),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () {},
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: _publicationsFuture == null
-            ? Center(child: CircularProgressIndicator())
-            : FutureBuilder<List<PublicationResponse>>(
-          future: _publicationsFuture!,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(
-                  child: Text('No se encontraron publicaciones.'));
-            } else {
-              final publications = snapshot.data!;
-              return ListView.builder(
-                itemCount: publications.length,
-                itemBuilder: (context, index) {
-                  final publication = publications[index];
-                  return _buildPublicationCard(
-                    context,
-                    title: publication.title,
-                    address: publication.address,
-                    technician: publication.job.name,
-                    description: publication.description,
-                    publication: publications[index],
-                  );
-                },
-              );
-            }
-          },
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Solicitudes',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Búsqueda',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-        ],
-        currentIndex: 2,
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.of(context).pushNamed('/');
-          } else if (index == 1) {
-            Navigator.push(context,
-              MaterialPageRoute(builder: (context) => TechSearchView(token: _token, technical: widget.technical),),
-            );
-          } else if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => TechnicalProfileScreen(token: _token, id: widget.technical.technicalId, technical: widget.technical)),
-            );
-          }
-        },
-      ),
-    );
+    }
+    catch(e){
+      print('Error al crear oferta');
+    }
   }
 }

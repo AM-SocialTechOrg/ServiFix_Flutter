@@ -350,7 +350,7 @@ class _TechnicalProfileScreenState extends State<TechnicalProfileScreen> {
                 Navigator.of(context).pushNamed('/');
               } else if (index == 1) {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => TechSearchView(token: _token,),),
+                    MaterialPageRoute(builder: (context) => TechSearchView(token: _token, technical: _technical),),
                 );
               } else if (index == 2) {
                 Navigator.push(
