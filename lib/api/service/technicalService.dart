@@ -3,9 +3,10 @@ import 'package:servifix_flutter/api/dto/get_technical_response_by_account.dart'
 import 'dart:convert';
 import '../dto/technical_request.dart';
 import '../dto/technical_response.dart';
+import './config.dart';
 
 class TechnicalService {
-  static const String apiBase = "https://servifix-api-docker.onrender.com/api/v1/";
+  static const String apiBase = Config.apiBase;
 
   Future<GetTechnicalResponseByAccount> getTechnicianByAccountId(int id,String TokenModel) async {
     String token = TokenModel;

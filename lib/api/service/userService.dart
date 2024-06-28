@@ -5,10 +5,11 @@ import 'package:servifix_flutter/api/dto/user_response.dart';
 import 'dart:convert';
 import '../dto/cliente_response.dart';
 import '../provider/AuthModel.dart';
+import './config.dart';
 
 class ClientService {
 
-  static const String apiBase = "https://servifix-api-docker.onrender.com/api/v1/";
+  static const String apiBase = Config.apiBase;
 
   Future<ClienteResponse> getCliente(String id,String TokenModel) async {
     String token = TokenModel;

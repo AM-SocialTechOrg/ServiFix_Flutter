@@ -6,9 +6,10 @@ import '../dto/login_response.dart';
 import '../dto/register_request.dart';
 import '../dto/register_response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import './config.dart';
 
 class AuthService {
-  static const String apiBase = "https://servifix-api-docker.onrender.com/api/v1/";
+  static const String apiBase = Config.apiBase;
 
   Future<LoginResponse> login(String email, String password) async {
     final requestBody = LoginRequest(email: email, password: password).toJson();

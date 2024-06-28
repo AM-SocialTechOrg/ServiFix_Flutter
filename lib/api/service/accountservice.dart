@@ -2,9 +2,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../dto/account_request.dart';
 import '../dto/account_response.dart';
+import './config.dart';
 
 class AccountService {
-  static const String apiBase = "https://servifix-api-docker.onrender.com/api/v1/";
+  static const String apiBase = Config.apiBase;
 
   Future<AccountResponse> createAccount(
       String firstName,
