@@ -30,6 +30,7 @@ Parameters
 
       if (res['data'] != null) {
         List<PublicationResponse> publicationResponse = (res['data'] as List).map((i) => PublicationResponse.fromJson(i)).toList();
+        print( "respuesta json res:" + publicationResponse[0].description.toString());
         return publicationResponse;
       } else {
         throw Exception('The response does not contain a "data" field');
