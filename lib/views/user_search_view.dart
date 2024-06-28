@@ -20,6 +20,7 @@ class _user_search_viewState extends State<user_search_view> {
   late int userId;
   late GetUserResponseByAccount cliente;
   Future<List<TechnicalData>>? _technicians;
+  TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -44,9 +45,16 @@ class _user_search_viewState extends State<user_search_view> {
 
   Widget _buildSearchField() {
     return TextField(
+      controller: _searchController,
       decoration: InputDecoration(
-        prefixIcon: Icon(Icons.search),
-        hintText: 'Buscar técnico por nombre o habilidad',
+        prefixIcon: IconButton(
+          icon: Icon(Icons.search),
+          onPressed: () {
+            String searchText = _searchController.text.trim();
+            _filterTechnicians(searchText);
+          },
+        ),
+        hintText: 'Buscar técnico por nombre',
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),
@@ -72,13 +80,12 @@ class _user_search_viewState extends State<user_search_view> {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 2, 16, 0),
-            child: Text('Habilidades: $skills',
-                textAlign: TextAlign.justify),
+            child: Text('Habilidades: $skills', textAlign: TextAlign.justify),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 2, 16, 0),
-            child: Text('Experiencia: $experience',
-                textAlign: TextAlign.justify),
+            child:
+            Text('Experiencia: $experience', textAlign: TextAlign.justify),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 2, 16, 0),
@@ -87,8 +94,7 @@ class _user_search_viewState extends State<user_search_view> {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 2, 16, 0),
-            child: Text('Género: $gender',
-                textAlign: TextAlign.justify),
+            child: Text('Género: $gender', textAlign: TextAlign.justify),
           ),
           ButtonBar(
             children: [
@@ -101,6 +107,25 @@ class _user_search_viewState extends State<user_search_view> {
         ],
       ),
     );
+  }
+
+  void _filterTechnicians(String searchText) async {
+    if (searchText.isNotEmpty) {
+      try {
+        List<TechnicalData> filteredTechnicians =
+        await TechnicalService().getAllTechniciansFirstNameStartingWith(
+            searchText, token);
+        setState(() {
+          _technicians = Future.value(filteredTechnicians);
+        });
+      } catch (e) {
+        print('Error filtering technicians: $e');
+      }
+    } else {
+      setState(() {
+        _technicians = TechnicalService().getAllTechnicians(token);
+      });
+    }
   }
 
   @override
@@ -131,12 +156,17 @@ class _user_search_viewState extends State<user_search_view> {
                   : FutureBuilder<List<TechnicalData>>(
                 future: _technicians!,
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                  if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return Center(
+                        child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No se encontraron técnicos.'));
+                    return Center(
+                        child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData ||
+                      snapshot.data!.isEmpty) {
+                    return Center(
+                        child: Text('No se encontraron técnicos.'));
                   } else {
                     final technicians = snapshot.data!;
                     return ListView.builder(
