@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:servifix_flutter/views/payment_view.dart';
+import 'payment_view.dart';
 
 class offer extends StatefulWidget {
   const offer({super.key});
@@ -90,7 +92,14 @@ class _offerState extends State<offer> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PaymentScreen(amount: double.parse(amount)),
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green[800],
                       shape: RoundedRectangleBorder(
