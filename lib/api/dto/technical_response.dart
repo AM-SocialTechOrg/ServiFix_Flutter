@@ -21,7 +21,7 @@ class TechnicalResponse {
 }
 
 class TechnicalData {
-  final int id;
+  final int technicalId;
   final String policeRecords;
   final String skills;
   final String experience;
@@ -30,7 +30,7 @@ class TechnicalData {
   final Account account;
 
   TechnicalData({
-    required this.id,
+    required this.technicalId,
     required this.policeRecords,
     required this.skills,
     required this.experience,
@@ -41,7 +41,7 @@ class TechnicalData {
 
   factory TechnicalData.fromJson(Map<String, dynamic> json) {
     return TechnicalData(
-      id: json['id'],
+      technicalId: json['technicalId'],
       policeRecords: json['policeRecords'],
       skills: json['skills'],
       experience: json['experience'],

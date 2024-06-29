@@ -13,7 +13,7 @@ class Offer extends StatefulWidget {
 }
 
 class _OfferState extends State<Offer> {
-  Future<List<OfferResponse>>? _offersFuture;
+  Future<List<OfferResponse2>>? _offersFuture;
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _OfferState extends State<Offer> {
     });
   }
 
-  Future<void> _updateOfferState(String token, OfferResponse offer, int newState) async {
+  Future<void> _updateOfferState(String token, OfferResponse2 offer, int newState) async {
     final offerRequest = OfferRequest(
       availability: offer.availability,
       amount: offer.amount,
@@ -52,7 +52,7 @@ class _OfferState extends State<Offer> {
 
   Widget _buildRequestCard(
       BuildContext context, {
-        required OfferResponse offer,
+        required OfferResponse2 offer,
         required String title,
         required String job,
         required String amount,
@@ -216,7 +216,7 @@ class _OfferState extends State<Offer> {
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 18, right: 18, top: 0, bottom: 0),
-        child: FutureBuilder<List<OfferResponse>>(
+        child: FutureBuilder<List<OfferResponse2>>(
           future: _offersFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {

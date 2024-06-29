@@ -9,6 +9,7 @@ import 'package:servifix_flutter/views/offer.dart';
 import 'package:servifix_flutter/api/service/PublicationService.dart';
 import 'package:servifix_flutter/api/dto/publication_response.dart';
 import 'package:servifix_flutter/api/dto/publication_request.dart';
+import 'package:servifix_flutter/views/user_search_view.dart';
 // importar authmodel
 
 import '../api/provider/AuthModel.dart';
@@ -408,7 +409,10 @@ class _OfferState extends State<RequestOffer> {
               MaterialPageRoute(builder: (context) => RequestOffer()),
             );
           } else if (index == 1) {
-            Navigator.of(context).pushNamed('/search');
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => user_search_view()),
+            );
           } else if (index == 2) {
             Navigator.push(
               context,

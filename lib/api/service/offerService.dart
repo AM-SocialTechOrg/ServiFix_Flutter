@@ -39,7 +39,7 @@ class OfferService {
     }
   }
 
-  Future<List<OfferResponse>> getOffersByPublicationId(String token, String publicationId) async {
+  Future<List<OfferResponse2>> getOffersByPublicationId(String token, String publicationId) async {
     final response = await http.get(
         Uri.parse(apiBase + "servifix/offers/publication/" + publicationId),
       headers: {
@@ -52,9 +52,9 @@ class OfferService {
       final res = json.decode(utf8.decode(response.bodyBytes));
       print("respuesta json:" + res.toString());
       if (res['data'] != null) {
-        List<OfferResponse> offers = [];
+        List<OfferResponse2> offers = [];
         for (var item in res['data']) {
-          offers.add(OfferResponse.fromJson(item));
+          offers.add(OfferResponse2.fromJson(item));
         }  return offers;
       } else {
         throw Exception('The response does not contain a "data" field');
