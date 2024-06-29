@@ -39,7 +39,32 @@ class OfferService {
     }
   }
 
-  Future<List<OfferResponse2>> getOffersByTechnicalId(String token, int technicalId) async {
+  Future<List<OfferResponse>> getOffersByPublicationId(String token, String publicationId) async {
+    final response = await http.get(
+        Uri.parse(apiBase + "servifix/offers/publication/" + publicationId),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final res = json.decode(utf8.decode(response.bodyBytes));
+      print("respuesta json:" + res.toString());
+      if (res['data'] != null) {
+        List<OfferResponse> offers = [];
+        for (var item in res['data']) {
+          offers.add(OfferResponse.fromJson(item));
+        }  return offers;
+      } else {
+        throw Exception('The response does not contain a "data" field');
+      }
+    } else {
+      throw Exception('Failed to load backend: ${response.statusCode}');
+    }
+  }
+
+    Future<List<OfferResponse2>> getOffersByTechnicalId(String token, int technicalId) async {
     final response = await http.get(
       Uri.parse(apiBase + "servifix/offers/technical/$technicalId"),
       headers: {
