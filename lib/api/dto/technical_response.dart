@@ -51,3 +51,38 @@ class TechnicalData {
     );
   }
 }
+
+
+
+class TechnicalResponse2 {
+  final int id;
+  final String policeRecords;
+  final String skills;
+  final String experience;
+  final String number;
+  final String description;
+  final Account account;
+
+  TechnicalResponse2({
+    required this.id,
+    required this.policeRecords,
+    required this.skills,
+    required this.experience,
+    required this.number,
+    required this.description,
+    required this.account,
+  });
+
+  factory TechnicalResponse2.fromJson(Map<String, dynamic> json) {
+    return TechnicalResponse2(
+      id: json['id'],
+      policeRecords: json['policeRecords'],
+      skills: json['skills'],
+      experience: json['experience'],
+      number: json['number'],
+      description: json['description'],
+      account: Account.fromJson(json['account']),
+    );
+  }
+}
+

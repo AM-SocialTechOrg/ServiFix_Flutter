@@ -38,4 +38,30 @@ class OfferService {
       throw Exception('Failed to load backend: ${response.statusCode}');
     }
   }
+
+  Future<List<OfferResponse2>> getOffersByTechnicalId(String token, int technicalId) async {
+    final response = await http.get(
+      Uri.parse(apiBase + "servifix/offers/technical/$technicalId"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(utf8.decode(response.bodyBytes));
+      print("respuesta json:" + responseData.toString());
+
+      if (responseData['data'] != null) {
+        List<dynamic> data = responseData['data'];
+        List<OfferResponse2> offers = data.map((offerJson) => OfferResponse2.fromJson(offerJson)).toList();
+        print("Ofertas obtenidas: $offers");
+        return offers;
+      } else {
+        throw Exception('La respuesta no contiene un campo "data" válido');
+      }
+    } else {
+      throw Exception('Error en la carga del backend: ${response.statusCode}');
+    }
+  }
 }

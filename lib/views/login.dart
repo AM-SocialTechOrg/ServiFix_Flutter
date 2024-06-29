@@ -5,6 +5,7 @@ import 'package:servifix_flutter/api/service/technicalService.dart';
 import 'package:servifix_flutter/api/service/userService.dart';
 import 'package:servifix_flutter/views/register1.dart';
 import 'package:servifix_flutter/api/service/authservice.dart';
+import 'package:servifix_flutter/views/tech_home.dart';
 import 'package:servifix_flutter/views/tech_profile.dart';
 import 'package:servifix_flutter/views/user_profile.dart';
 
@@ -453,7 +454,7 @@ class _LogInState extends State<LogIn> {
                             });
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => TechnicalProfileScreen(token: token, id: id, technical: tecnico)),
+                              MaterialPageRoute(builder: (context) => TechHomePage(token: token, id: id, technical: tecnico)),
                             );
                           } catch (e) {
                             print('Error al obtener el técnico: $e');
