@@ -47,7 +47,10 @@ class _TechSearchViewState extends State<TechSearchView> {
     return RichText(
       text: TextSpan(
         text: '$title: ',
-        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+        style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.black),
         children: <TextSpan>[
           TextSpan(
             text: content,
@@ -306,48 +309,82 @@ class _TechSearchViewState extends State<TechSearchView> {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 5),
-                    _buildPublicationDetail(title: 'Dirección', content: address),
-                    _buildPublicationDetail(title: 'Técnico', content: technician),
-                    RichText(
-                      text: TextSpan(
-                        text: 'Descripción: ',
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: description.length > 50 ? description.substring(0, 40) + '...' : description,
-                            style: TextStyle(fontWeight: FontWeight.normal),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildPublicationDetail(title: 'Dirección', content: address),
+                              _buildPublicationDetail(title: 'Técnico', content: technician),
+                              RichText(
+                                text: TextSpan(
+                                  text: 'Descripción: ',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: description.length > 50 ? description.substring(0, 40) + '...' : description,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 12
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 10),
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) => PublicationView(token: _token, technicalId: widget.technical.technicalId, publication: publication)
+                                      ));
+                                },
+                                child: Text('Ver detalles',
+                                    style: TextStyle(fontSize: 12,
+                                     color: Colors.white)
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xFF1769FF),
+                                  padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                                  minimumSize: Size(0, 28),
+                                ),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  _showOfferServiceSheet(context, publication.id);
+                                },
+                                child: Text('Hacer oferta',
+                                  style: TextStyle(fontSize: 12,
+                                  color: Color(0xFF1769FF)
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                                  minimumSize: Size(0, 28),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                   ],
                 ),
+                ],
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => PublicationView(token: _token, technicalId: widget.technical.technicalId, publication: publication)
-                    ));
-                  },
-                  child: Text('Ver detalles'),
-                ),
-                SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    _showOfferServiceSheet(context, publication.id);
-                  },
-                  child: Text('Hacer oferta'),
-                ),
-              ],
-            ),
+            )
           ],
         ),
       ),
@@ -411,37 +448,6 @@ class _TechSearchViewState extends State<TechSearchView> {
             }
           },
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Solicitudes',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Búsqueda',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-        ],
-        currentIndex: 2,
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.of(context).pushNamed('/');
-          } else if (index == 1) {
-            Navigator.push(context,
-              MaterialPageRoute(builder: (context) => TechSearchView(token: _token, technical: widget.technical),),
-            );
-          } else if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => TechnicalProfileScreen(token: _token, id: widget.technical.technicalId, technical: widget.technical)),
-            );
-          }
-        },
       ),
     );
   }

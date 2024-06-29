@@ -130,4 +130,27 @@ class TechnicalService {
       throw Exception('Failed to create Technical: ${response.statusCode}');
     }
   }
+
+  Future<TechnicalResponse> updateTechnical(TechnicalRequest request, String token) async {
+    final bodyJson = json.encode(request.toJson());
+
+    print ('Json: ' + bodyJson);
+
+    final response = await http.put(
+      Uri.parse(apiBase + "servifix/technicals/${request.accountId}"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: bodyJson,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final res = json.decode(response.body);
+      final technicalResponse = TechnicalResponse.fromJson(res);
+      return technicalResponse;
+    } else {
+      throw Exception('Failed to update Technical: ${response.statusCode}');
+    }
+  }
 }

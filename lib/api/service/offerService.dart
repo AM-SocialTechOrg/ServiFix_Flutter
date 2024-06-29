@@ -39,9 +39,9 @@ class OfferService {
     }
   }
 
-  Future<List<OfferResponse>> getOffersByPublicationId(String token, String publicationId) async {
+  Future<List<OfferResponse2>> getOffersByTechnicalId(String token, int technicalId) async {
     final response = await http.get(
-      Uri.parse(apiBase + "servifix/offers/publication/" + publicationId),
+      Uri.parse(apiBase + "servifix/offers/technical/$technicalId"),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -49,20 +49,19 @@ class OfferService {
     );
 
     if (response.statusCode == 200) {
-      final res = json.decode(utf8.decode(response.bodyBytes));
-      print("respuesta json:" + res.toString());
+      final responseData = json.decode(utf8.decode(response.bodyBytes));
+      print("respuesta json:" + responseData.toString());
 
-      if (res['data'] != null) {
-        List<OfferResponse> offers = [];
-        for (var item in res['data']) {
-          offers.add(OfferResponse.fromJson(item));
-        }
+      if (responseData['data'] != null) {
+        List<dynamic> data = responseData['data'];
+        List<OfferResponse2> offers = data.map((offerJson) => OfferResponse2.fromJson(offerJson)).toList();
+        print("Ofertas obtenidas: $offers");
         return offers;
       } else {
-        throw Exception('The response does not contain a "data" field');
+        throw Exception('La respuesta no contiene un campo "data" válido');
       }
     } else {
-      throw Exception('Failed to load backend: ${response.statusCode}');
+      throw Exception('Error en la carga del backend: ${response.statusCode}');
     }
   }
 
@@ -84,5 +83,4 @@ class OfferService {
       throw Exception('Failed to edit publication');
     }
   }
-
 }

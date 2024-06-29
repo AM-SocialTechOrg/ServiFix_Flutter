@@ -42,7 +42,9 @@ class _PublicationViewState extends State<PublicationView> {
             Navigator.of(context).pop();
           },
         ),
-        title: Text('Ofertas'),
+        title: Text('Ofertas',
+          style: TextStyle(fontSize: 20),
+        ),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
@@ -56,31 +58,31 @@ class _PublicationViewState extends State<PublicationView> {
                 style: TextStyle(fontSize: 20),
               ),
               SizedBox(height: 18),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: 20,
-                      backgroundImage: NetworkImage(widget.publication.user.image),
-                    ),
-                    SizedBox(width: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.publication.user.account.firstName +
-                              ' ' +
-                              widget.publication.user.account.lastName,
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'Cliente',
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundImage: NetworkImage(widget.publication.user.image),
+                  ),
+                  SizedBox(width: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.publication.user.account.firstName +
+                            ' ' +
+                            widget.publication.user.account.lastName,
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'Cliente',
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
               SizedBox(height: 20),
               // Publication card
               Container(
@@ -147,7 +149,6 @@ class _PublicationViewState extends State<PublicationView> {
               // Hacer oferta button
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
                   _showOfferServiceSheet(context, widget.publication.id);
                 },
                 style: ElevatedButton.styleFrom(
@@ -168,6 +169,27 @@ class _PublicationViewState extends State<PublicationView> {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Ofertas',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Búsqueda',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Perfil',
+          ),
+        ],
+        selectedItemColor: Colors.blue,
+        currentIndex: 1,
+        onTap: (index) {
+          // Handle taps
+        },
       ),
     );
   }
@@ -388,9 +410,10 @@ class _PublicationViewState extends State<PublicationView> {
     );
   }
 
-  Future<void> createOffer(int id) async{
+  Future<void> createOffer(int id) async {
     String formattedDate = "${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}";
     String formattedTime = "${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}";
+
     final _availability = "$formattedDate $formattedTime";
 
     final offer = OfferRequest(
@@ -409,12 +432,11 @@ class _PublicationViewState extends State<PublicationView> {
     try {
       final offerRes = await OfferService().createOffer(widget.token, offer);
 
-      if(offerRes != null){
+      if (offerRes != null) {
         print('Oferta creada');
         print(offerRes);
       }
-    }
-    catch(e){
+    } catch (e) {
       print('Error al crear oferta');
     }
   }
