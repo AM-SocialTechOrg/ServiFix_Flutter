@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:servifix_flutter/api/preferences/userPreferences.dart';
 import 'package:servifix_flutter/views/user_profile.dart';
 import 'package:servifix_flutter/api/dto/get_user_response_by_account.dart';
@@ -8,6 +9,9 @@ import 'package:servifix_flutter/views/offer.dart';
 import 'package:servifix_flutter/api/service/PublicationService.dart';
 import 'package:servifix_flutter/api/dto/publication_response.dart';
 import 'package:servifix_flutter/api/dto/publication_request.dart';
+// importar authmodel
+
+import '../api/provider/AuthModel.dart';
 
 class RequestOffer extends StatefulWidget {
   const RequestOffer({Key? key}) : super(key: key);
@@ -212,9 +216,16 @@ class _OfferState extends State<RequestOffer> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
+
+                      var publicationId = publication.id.toString();
+                      // asignar el id de la publicacion a la variable al provider
+                      Authmodel authModel = Provider.of<Authmodel>(context, listen: false);
+                      authModel.setPublicId(publicationId);
+                      // asignar el token al provider
+                      authModel.setToken(token);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => offer()),
+                        MaterialPageRoute(builder: (context) => Offer()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
