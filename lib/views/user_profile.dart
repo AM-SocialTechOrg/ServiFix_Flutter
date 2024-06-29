@@ -9,6 +9,7 @@ import 'package:servifix_flutter/api/provider/AuthModel.dart';
 import 'package:servifix_flutter/api/service/PublicationService.dart';
 import 'package:servifix_flutter/views/request_offer.dart';
 import 'package:servifix_flutter/api/preferences/userPreferences.dart';
+import 'package:servifix_flutter/views/user_search_view.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final String token;
@@ -452,7 +453,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 MaterialPageRoute(builder: (context) => RequestOffer()),
               );
             } else if (index == 1) {
-              Navigator.of(context).pushNamed('/search');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => user_search_view()),
+              );
             } else if (index == 2) {
               Navigator.push(
                 context,

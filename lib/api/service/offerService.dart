@@ -64,4 +64,23 @@ class OfferService {
       throw Exception('Error en la carga del backend: ${response.statusCode}');
     }
   }
+
+  //editar oferta
+  Future<void> updateOffer(String token, OfferRequest offer, String offerId) async {
+    final requestBody = offer.toJson();
+    final bodyJson = json.encode(requestBody);
+    final response = await http.put(
+      Uri.parse(apiBase + "servifix/offers/" + offerId),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      encoding: Encoding.getByName('utf-8'),
+      body: bodyJson,
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to edit publication');
+    }
+  }
 }

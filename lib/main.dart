@@ -4,6 +4,7 @@ import 'package:servifix_flutter/views/request_offer.dart';
 import 'package:servifix_flutter/views/login.dart';
 import 'package:servifix_flutter/views/offer.dart';
 import 'package:provider/provider.dart';
+import 'package:servifix_flutter/views/user_search_view.dart';
 import 'api/provider/AuthModel.dart';
 
 void main() {

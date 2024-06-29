@@ -30,6 +30,7 @@ Parameters
 
       if (res['data'] != null) {
         List<PublicationResponse> publicationResponse = (res['data'] as List).map((i) => PublicationResponse.fromJson(i)).toList();
+        print( "respuesta json res:" + publicationResponse[0].description.toString());
         return publicationResponse;
       } else {
         throw Exception('The response does not contain a "data" field');
@@ -111,6 +112,34 @@ Parameters
       return publicationResponse;
     } else {
       throw Exception('Failed to create Publication: ${response.statusCode}');
+    }
+  }
+
+  Future<void> editPublication(String publicationId, String token, Map<String, dynamic> data) async {
+    final response = await http.put(
+      Uri.parse(apiBase + "servifix/publications/$publicationId"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to edit publication');
+    }
+  }
+
+  Future<void> deletePublication(String publicationId, String token) async {
+    final response = await http.delete(
+      Uri.parse(apiBase + "servifix/publications/$publicationId"),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete publication');
     }
   }
 }

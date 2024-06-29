@@ -31,6 +31,82 @@ class TechnicalService {
     }
   }
 
+  Future<List<TechnicalData>> getAllTechnicians(String TokenModel) async {
+    String token = TokenModel;
+
+    final response = await http.get(
+      Uri.parse(apiBase + "servifix/technicals"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final res = json.decode(utf8.decode(response.bodyBytes));
+      print( "respuesta json todos los tecnicos:" + res.toString());
+
+      if (res['data'] != null) {
+        List<TechnicalData> technicalResponse = (res['data'] as List).map((i) => TechnicalData.fromJson(i)).toList();
+        //print( "respuesta json todos los tecnicosdata:" + technicalResponse[0].number.toString());
+        return technicalResponse;
+      } else {
+        throw Exception('The response does not contain a "data" field');
+      }
+    } else {
+      throw Exception('Failed to load backend: ${response.statusCode}');
+    }
+  }
+
+  Future<List<TechnicalData>> getAllTechniciansFirstNameStartingWith(String firstName, String token) async {
+    final response = await http.get(
+      Uri.parse(apiBase + "servifix/technicals/firstNameStartingWith/$firstName"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final res = json.decode(utf8.decode(response.bodyBytes));
+      print( "respuesta json:" + res.toString());
+
+      if (res['data'] != null) {
+        List<TechnicalData> technicalResponse = (res['data'] as List).map((i) => TechnicalData.fromJson(i)).toList();
+        return technicalResponse;
+      } else {
+        throw Exception('The response does not contain a "data" field');
+      }
+    } else {
+      throw Exception('Failed to load backend: ${response.statusCode}');
+    }
+  }
+
+  Future<List<TechnicalResponse>> getAllTechniciansLastNameStartingWith(String lastName, String token) async {
+    final response = await http.get(
+      Uri.parse(apiBase + "servifix/technicals/lastNameStartingWith/$lastName"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final res = json.decode(utf8.decode(response.bodyBytes));
+      print( "respuesta json:" + res.toString());
+
+      if (res['data'] != null) {
+        List<TechnicalResponse> technicalResponse = (res['data'] as List).map((i) => TechnicalResponse.fromJson(i)).toList();
+        return technicalResponse;
+      } else {
+        throw Exception('The response does not contain a "data" field');
+      }
+    } else {
+      throw Exception('Failed to load backend: ${response.statusCode}');
+    }
+  }
+
+
 
   Future<TechnicalResponse> createTechnical(TechnicalRequest request, String token) async {
     final bodyJson = json.encode(request.toJson());
