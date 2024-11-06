@@ -21,6 +21,7 @@ class LogIn extends StatefulWidget {
 
 class _LogInState extends State<LogIn> {
   String _errorMessage = '';
+  bool _isObscured = true;
 
   void clearFields() {
     emailController.clear();
@@ -389,6 +390,7 @@ class _LogInState extends State<LogIn> {
                 SizedBox(height: 16),
                 TextField(
                   controller: passwordController,
+                  obscureText: _isObscured,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                     enabledBorder: OutlineInputBorder(
@@ -401,7 +403,15 @@ class _LogInState extends State<LogIn> {
                     ),
                     labelText: 'Contraseña',
                     labelStyle: TextStyle(color: Color(0xFFA0A0A0)),
-                  ),
+                    suffixIcon: IconButton(
+                      icon: Icon(_isObscured ? Icons.visibility_off : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _isObscured = !_isObscured;
+                        });
+                      },
+                    ),
+                  )
                 ),
                 SizedBox(height: 16),
                 if (_errorMessage.isNotEmpty)

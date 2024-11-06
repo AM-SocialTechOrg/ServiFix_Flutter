@@ -96,33 +96,36 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   ),
                 ),
                 SizedBox(height: 20),
-                DropdownButtonFormField(
-                  value: _selectedProfession,
-                  items: [
-                    DropdownMenuItem(child: Text('Técnico'), value: '1'),
-                    DropdownMenuItem(child: Text('Gasfitero'), value: '2'),
-                    DropdownMenuItem(child: Text('Electricista'), value: '3'),
-                    DropdownMenuItem(child: Text('Cerrajero'), value: '4'),
-                    DropdownMenuItem(child: Text('Pintor'), value: '5'),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedProfession = value.toString();
-                    });
-                  },
-                  style: TextStyle(color: Color(0xFF4D4D4D), fontSize: 14),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
+                Semantics(
+                  identifier: 'profesionDropdown',
+                  child: DropdownButtonFormField(
+                    value: _selectedProfession,
+                    items: [
+                      DropdownMenuItem(child: Text('Técnico'), value: '1'),
+                      DropdownMenuItem(child: Text('Gasfitero'), value: '2'),
+                      DropdownMenuItem(child: Text('Electricista'), value: '3'),
+                      DropdownMenuItem(child: Text('Cerrajero'), value: '4'),
+                      DropdownMenuItem(child: Text('Pintor'), value: '5'),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedProfession = value.toString();
+                      });
+                    },
+                    style: TextStyle(color: Color(0xFF4D4D4D), fontSize: 14),
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF1769FF), width: 1.0),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      labelStyle: TextStyle(color: Color(0xFFA0A0A0)),
+                      labelText: '¿Qué profesional necesitas?',
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF1769FF), width: 1.0),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    labelStyle: TextStyle(color: Color(0xFFA0A0A0)),
-                    labelText: '¿Qué profesional necesitas?',
                   ),
                 ),
                 SizedBox(height: 20),
@@ -146,31 +149,34 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   ],
                 ),
                 SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: (){
-                    _submitServiceRequest(context);
-                    _showSuccessDialog(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    backgroundColor: Color(0xFF1769FF),
-                    elevation: 0,
-                    padding: EdgeInsets.symmetric(horizontal: 90),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      SizedBox(width: 8),
-                      Text(
-                        'Publicar solicitud',
-                        style: TextStyle(
-                          color: Color(0xFFFFFFFF),
-                          fontSize: 14,
-                        ),
+                Semantics(
+                  identifier: 'publicarSolicitudButton',
+                  child: ElevatedButton(
+                    onPressed: (){
+                      _submitServiceRequest(context);
+                      _showSuccessDialog(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
                       ),
-                    ],
+                      backgroundColor: Color(0xFF1769FF),
+                      elevation: 0,
+                      padding: EdgeInsets.symmetric(horizontal: 90),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        SizedBox(width: 8),
+                        Text(
+                          'Publicar solicitud',
+                          style: TextStyle(
+                            color: Color(0xFFFFFFFF),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 SizedBox(height: 30),
@@ -190,11 +196,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           title: Text('Solicitud enviada'),
           content: Text('Tu solicitud ha sido enviada exitosamente.'),
           actions: <Widget>[
-            TextButton(
-              child: Text('Aceptar'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+            Semantics(
+              identifier: 'aceptarButton',
+              child: TextButton(
+                child: Text('Aceptar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
           ],
         );
@@ -203,27 +212,30 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   Widget _buildTextFormField(String labelText, {int maxLines = 1, TextEditingController? controller}) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
+    return Semantics(
+      identifier: labelText,
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide(color: Color(0xFFF4F4F4), width: 1.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF1769FF), width: 1.0),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          labelStyle: TextStyle(color: Color(0xFFA0A0A0)),
+          labelText: labelText,
         ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xFF1769FF), width: 1.0),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        labelStyle: TextStyle(color: Color(0xFFA0A0A0)),
-        labelText: labelText,
+        maxLines: maxLines,
+        onChanged: (value) {
+          setState(() {
+            controller!.text = value;
+          });
+        },
       ),
-      maxLines: maxLines,
-      onChanged: (value) {
-        setState(() {
-          controller!.text = value;
-        });
-      },
     );
   }
 
@@ -284,32 +296,35 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               widget.cliente != null ? 'Cliente' : 'Cargando...',
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => _showServiceRequestForm(context),
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
+            Semantics(
+              identifier: 'solicitarServicioButton',
+              child: ElevatedButton(
+                onPressed: () => _showServiceRequestForm(context),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  backgroundColor: Color(0xFF1769FF),
+                  elevation: 0,
+                  padding: EdgeInsets.symmetric(horizontal: 90),
                 ),
-                backgroundColor: Color(0xFF1769FF),
-                elevation: 0,
-                padding: EdgeInsets.symmetric(horizontal: 90),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Icon(
-                    Icons.edit_document,
-                    color: Colors.white,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    'Solicitar servicio',
-                    style: TextStyle(
-                      color: Color(0xFFFFFFFF),
-                      fontSize: 16,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Icon(
+                      Icons.edit_document,
+                      color: Colors.white,
                     ),
-                  ),
-                ],
+                    SizedBox(width: 8),
+                    Text(
+                      'Solicitar servicio',
+                      style: TextStyle(
+                        color: Color(0xFFFFFFFF),
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             SizedBox(height: 20),

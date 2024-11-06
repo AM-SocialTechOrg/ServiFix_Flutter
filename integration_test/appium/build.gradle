@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Añade las dependencias necesarias para Appium
+    testImplementation 'org.testng:testng:7.4.0'
+    testImplementation 'io.appium:java-client:8.0.0'
+    // Otras dependencias que necesites
+}
+
+test {
+    useTestNG()
+}
